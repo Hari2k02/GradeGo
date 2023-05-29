@@ -5,7 +5,7 @@ export const DataContext = createContext();
 
 const { localStorage } = window;
 
- function DataProvider ({ children })  {
+function DataProvider ({ children })  {
   const [hellodata, setHelloData] = useState(() => {
     const storedData = localStorage.getItem('hellodata');
     return storedData
