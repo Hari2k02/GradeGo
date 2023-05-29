@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import {DataProvider} from './DataContext';
 import {FacultyDataProvider} from './FacultyDataContext';
@@ -15,13 +15,13 @@ export default function App() {
     <DataProvider>
     <FacultyDataProvider>
     <HelmetProvider>
-      <BrowserRouter>
+      <HashRouter>
         <ThemeProvider>
           <ScrollToTop />
           <StyledChart />
           <Router />
         </ThemeProvider>
-      </BrowserRouter>
+      </HashRouter>
     </HelmetProvider>
     </FacultyDataProvider>
     </DataProvider>
