@@ -15,8 +15,14 @@ const Header = (props) => {
             GradeGo
           </Link>
           <div className="header-menu">
-            <Link to="/" className="header-navlink1 Large">
+            {/* <Link to="/" className="header-navlink1 Large">
               Home
+            </Link> */}
+            <Link to="/" className="header-navlink2 Large">
+              Features
+            </Link>
+            <Link to="/" className="header-navlink2 Large">
+              About Us
             </Link>
             <Link to="/contact" className="header-navlink2 Large">
               Contact Us

@@ -9,9 +9,13 @@
   padding-top: var(--dl-space-space-triplequarterunit);
   border-color: var(--dl-color-secondary-200);
   padding-left: var(--dl-space-space-unitandahalfunit);
-  border-radius: 1.875rem;
+  border-radius: 1.875rem !important;
   padding-right: var(--dl-space-space-unitandahalfunit);
   padding-bottom: var(--dl-space-space-triplequarterunit);
+  -webkit-border-radius: 1.875rem !important;
+  -moz-border-radius: 1.875rem !important;
+  -ms-border-radius: 1.875rem !important;
+  -o-border-radius: 1.875rem !important;
 }
 .outline-gray-button-button:hover {
   cursor: pointer;
