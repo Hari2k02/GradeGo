@@ -77,6 +77,7 @@ const Timetable = () => {
 
 
             if (response.ok) {
+                
                 console.log('Timetable saved successfully');
                 window.location.reload();
                 // Do something on success

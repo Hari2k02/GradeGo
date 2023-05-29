@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import SocialMedia from './social-media'
+// import SocialMedia from './social-media'
 import './footer.css'
 
 const Footer = () => {
@@ -13,9 +13,9 @@ const Footer = () => {
           <span className="footer-text">GradeGo</span>
           <span>Copyright © {year}.</span>
         </div>
-        <div className="social-media-container">
+        {/* <div className="social-media-container">
           <SocialMedia/>
-        </div>
+        </div> */}
         <div className="footer-container2">
           <div className="footer-container3">
             <span className="footer-text02 Large">Quick Links</span>
@@ -28,6 +28,10 @@ const Footer = () => {
                 Contact Us
               </Link></span>
             <span className="footer-text05 Large">About Us</span>
+            {/* Temporary Link to Dashboard */}
+            <span className="footer-text05">
+              <Link to="/facdashboard">Dashboard</Link>
+            </span>
           </div>
         </div>
       </div>
