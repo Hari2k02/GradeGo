@@ -44,13 +44,15 @@ router.post('/login', async (req, res) => {
         }
         if (isStudent) {
           const studentCourses = await StudentCourses.findOne({ _id: ktuId });
-          const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1 });
-          return res.json({ status: 'ok', user: 'student', details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
+          const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1});
+          const nameDetails = await Student.findOne({ _id: ktuId},{name:1});
+          return res.json({ status: 'ok', user: 'student',name:nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
         } else {
           const isFaculty = await Faculty.findOne({ _id: ktuId });
 
 
           const isStaffAdvisor = Faculty.findOne({ _id: ktuId, roles: [{ roleName: 'Staff Advisor' }] });
+          const nameDetail = await Faculty.findOne({ _id: ktuId},{name:1});
           if (isFaculty) {
             if (isStaffAdvisor) {
               const staffDetails = await StaffAdvisor.findOne({ _id: ktuId });
@@ -58,10 +60,10 @@ router.post('/login', async (req, res) => {
               // const courseDetails = await CodeToName.findOne({_id:staffDetails.semesterHandled});
               const courseDetails = await Courses.find({ semester: staffDetails.semesterHandled });
               //console.log(courseDetails);
-              return res.json({ status: 'ok', user: 'faculty', details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
+              return res.json({ status: 'ok', user: 'faculty',name:nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
             }
             else {
-              return res.json({ status: 'ok', user: 'faculty', accessToken: accessToken, refreshToken: refreshToken });
+              return res.json({ status: 'ok', user: 'faculty',name:nameDetail, accessToken: accessToken, refreshToken: refreshToken });
             }
           }
           else {
