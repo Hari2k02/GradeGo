@@ -45,14 +45,14 @@ router.post('/login', async (req, res) => {
         if (isStudent) {
           const studentCourses = await StudentCourses.findOne({ _id: ktuId });
           const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1});
-          const nameDetails = await Student.findOne({ _id: ktuId},{name:1});
+          const nameDetails = await Student.findOne({ _id: ktuId},{name:1,email:1});
           return res.json({ status: 'ok', user: 'student',name:nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
         } else {
           const isFaculty = await Faculty.findOne({ _id: ktuId });
 
 
           const isStaffAdvisor = Faculty.findOne({ _id: ktuId, roles: [{ roleName: 'Staff Advisor' }] });
-          const nameDetail = await Faculty.findOne({ _id: ktuId},{name:1});
+          const nameDetail = await Faculty.findOne({ _id: ktuId},{name:1,email:1});
           if (isFaculty) {
             if (isStaffAdvisor) {
               const staffDetails = await StaffAdvisor.findOne({ _id: ktuId });
