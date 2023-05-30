@@ -3,9 +3,9 @@ import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Select, M
 import { DataContext } from '../DataContext';
 
 const AttendanceReport = () => {
-  const [attendanceData, setAttendanceData] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [courses, setCourses] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
 
   const { hellodata } = useContext(DataContext);
 
@@ -37,18 +37,31 @@ const AttendanceReport = () => {
     fetchCourses();
   }, []);
 
-  const handleClassChange = (event) => {
-    setSelectedClass(event.target.value);
-  };
+  const handleClassChange = async (event) => {
+    const selectedValue = event.target.value;
+    setSelectedClass(selectedValue);
 
-  const fetchAttendanceDetails = () => {
-    // Replace this with your API call to fetch attendance data for the selected class
-    const data = [
-      { studentName: 'John Doe', attendanceStatus: 'Present' },
-      { studentName: 'Jane Smith', attendanceStatus: 'Absent' },
-      // Add more attendance details here
-    ];
-    setAttendanceData(data);
+    try {
+      const response = await fetch('http://localhost:1337/facdashboard/studentAttendance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ _id: hellodata.details._id, courseCode: selectedValue }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setAttendanceData(data);
+        console.log(data);
+      } else {
+        // Handle error response
+        console.error('Error fetching attendance data');
+      }
+    } catch (error) {
+      // Handle fetch error
+      console.error('Error fetching attendance data:', error);
+    }
   };
 
   return (
@@ -57,7 +70,7 @@ const AttendanceReport = () => {
         Attendance Report
       </Typography>
 
-      <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%' }}>
+      <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
         {courses.map((course) => (
           <MenuItem key={course._id} value={course._id}>
             {course.courseName}
@@ -66,18 +79,26 @@ const AttendanceReport = () => {
       </Select>
 
       {attendanceData.length > 0 && (
-        <Table>
+        <Table style={{ marginBottom: '2rem' }}>
           <TableHead>
             <TableRow>
               <TableCell>Student Name</TableCell>
-              <TableCell>Attendance Status</TableCell>
+              <TableCell>Present Days</TableCell>
+              <TableCell>Total Days</TableCell>
+              <TableCell>Percentage Present</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {attendanceData.map((student, index) => (
-              <TableRow key={index}>
-                <TableCell>{student.studentName}</TableCell>
-                <TableCell>{student.attendanceStatus}</TableCell>
+            {attendanceData.map((student) => (
+              <TableRow key={student._id}>
+                <TableCell>{`${student.name.name.firstName} ${student.name.name.lastName}`}</TableCell>
+                <TableCell>{student.presentDays}</TableCell>
+                <TableCell>{student.totalDays}</TableCell>
+                <TableCell>
+                  {student.totalDays === 0
+                    ? 'N/A' // Display 'N/A' if totalDays is 0
+                    : `${Math.round((student.presentDays / student.totalDays) * 100)}%`}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
