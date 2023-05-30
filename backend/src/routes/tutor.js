@@ -77,7 +77,7 @@ router.post('/tutor/attendance', async (req, res) => {
       }
       else{
         console.log('there is a duplicate');
-        const updateAttendance = await InternalMark.updateOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode},{$set:{'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent }}});
+        const updateAttendance = await InternalMark.updateOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode,'courseAssessmentTheory.attendance.date':date,'courseAssessmentTheory.attendance.hour':hour},{$set:{'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent }}});
         if(updateAttendance) {
           res.json({status:'ok'});
         }
