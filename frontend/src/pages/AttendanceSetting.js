@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
-// import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { FacultyDataContext } from '../FacultyDataContext';
-
 
 import {
   Card,
@@ -21,16 +19,15 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Select,
   CircularProgress,
   DialogActions,
   DialogContent,
   DialogTitle,
   Dialog,
+  TextField, // Import TextField component
 } from '@mui/material';
 import Label from '../components/label';
 import Scrollbar from '../components/scrollbar';
-
 
 // ----------------------------------------------------------------------
 
@@ -41,19 +38,16 @@ const TABLE_HEAD = [
   { id: '' },
 ];
 
-
 export default function AttendanceSetting() {
-
   const [dataSendSuccess, setDataSendSuccess] = useState(false);
   const { facsemdata } = useContext(FacultyDataContext);
-  const [selectedOpt, setSelectedOpt] = useState("");
+  const [selectedOpt, setSelectedOpt] = useState('');
   const [semester, setSemester] = useState(0);
-  const [courseCode, setCourseCode] = useState("");
+  const [courseCode, setCourseCode] = useState('');
   const [batch, setBatch] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const handleSelectOption = (event) => {
-
     const selectedValue = event.target.value;
     const selectedOption = facsemdata.facultyDetails.coursesHandled.find(
       (course) => course._id === selectedValue._id
@@ -66,15 +60,11 @@ export default function AttendanceSetting() {
     }
 
     setSelectedOpt(selectedValue);
-
   };
-
 
   const [userList, setUserList] = useState([]);
   const [page, setPage] = useState(0);
-  // const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
-  // const [orderBy, setOrderBy] = useState('name');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filteredStudents, setFilteredStudents] = useState(userList);
 
@@ -84,7 +74,7 @@ export default function AttendanceSetting() {
       const requestData = {
         semester: semester,
         batch: batch,
-        courseCode: courseCode
+        courseCode: courseCode,
       };
 
       try {
@@ -103,7 +93,6 @@ export default function AttendanceSetting() {
         const data = await response.json();
         setUserList(data);
         setLoading(false);
-
       } catch (error) {
         console.error(error);
         setLoading(false);
@@ -186,13 +175,12 @@ export default function AttendanceSetting() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredStudents.length) : 0;
 
   const submitAttendance = async () => {
-    let currentDate = new Date().toISOString().slice(0, 10); // Get current date in yyyy-mm-dd format
-    let currentHour = new Date().getHours(); // Get current hour
+    let currentDate = new Date().toISOString().slice(0, 10);
+    let currentHour = new Date().getHours();
+
     if (currentHour <= 12) {
       currentHour = currentHour - 8;
-    }
-
-    else if (currentHour >= 13) {
+    } else if (currentHour >= 13) {
       currentHour = currentHour - 9;
     }
 
@@ -204,7 +192,7 @@ export default function AttendanceSetting() {
         courseCode,
         date: currentDate,
         hour: currentHour,
-        isPresent: status === 'present'
+        isPresent: status === 'present',
       };
     });
 
@@ -217,12 +205,9 @@ export default function AttendanceSetting() {
         body: JSON.stringify(attendanceData),
       });
 
-      if(response.ok)
-      {
+      if (response.ok) {
         setDataSendSuccess(true);
-      }
-
-      else  {
+      } else {
         throw new Error('Error: Attendance submission failed');
       }
 
@@ -240,7 +225,6 @@ export default function AttendanceSetting() {
 
   return (
     <>
-
       <Helmet>
         <title>Attendance Settings</title>
       </Helmet>
@@ -248,45 +232,49 @@ export default function AttendanceSetting() {
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4">Attendance Settings</Typography>
         </Stack>
-        <Stack direction="row" spacing={2}>
-          <Typography variant="subtitle1">Select Details:</Typography>
-          <Select value={selectedOpt} onChange={handleSelectOption}>
+        <Stack direction="row" spacing={2} alignItems="center">
+          <TextField
+            select
+            fullWidth
+            label="Select Details"
+            value={selectedOpt}
+            onChange={handleSelectOption}
+            variant="outlined"
+          >
             {facsemdata.facultyDetails.coursesHandled.map((course) => (
               <MenuItem key={course._id} value={course}>
                 Semester: {course.semester} | Batch: {course.batch} | Course Code: {course.courseCode}
               </MenuItem>
             ))}
-          </Select>
+          </TextField>
         </Stack>
 
         {loading ? (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '300px', // Set a minimum height for the container
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '300px',
+            }}
+          >
             <CircularProgress />
           </div>
-
         ) : (
-          < Card >
+          <Card>
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
                   <TableHead>
                     <TableRow>
-
                       {TABLE_HEAD.map((headCell) => (
                         <TableCell
                           key={headCell.id}
                           align={headCell.alignRight ? 'right' : 'left'}
-                        // sortDirection={orderBy === headCell.id ? order : false}
                         >
                           {headCell.label}
                         </TableCell>
                       ))}
-
                       <TableCell padding="checkbox">
                         <Checkbox
                           color="primary"
@@ -314,7 +302,6 @@ export default function AttendanceSetting() {
                             selected={isItemSelected}
                             aria-checked={isItemSelected}
                           >
-
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
                               <Stack direction="row" alignItems="center" spacing={2}>
@@ -365,24 +352,23 @@ export default function AttendanceSetting() {
                 Submit Attendance
               </Button>
             </Scrollbar>
-          </Card>)}
-
-
+          </Card>
+        )}
 
         <Dialog open={dataSendSuccess} onClose={handleDataSendSuccessClose}>
-          <DialogTitle>Attendance submitted</DialogTitle>
+          <DialogTitle>Attendance Submitted Successfully!</DialogTitle>
           <DialogContent>
-            <p>The attendance data was submitted to the database.</p>
+            <Typography>
+              Attendance for {courseCode} (Semester: {semester}, Batch: {batch}) has been submitted successfully.
+            </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDataSendSuccessClose} color="primary" autoFocus>
+            <Button onClick={handleDataSendSuccessClose} autoFocus>
               Close
             </Button>
           </DialogActions>
         </Dialog>
-
       </Container>
-
     </>
   );
 }
