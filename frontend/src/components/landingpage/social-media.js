@@ -1,7 +1,5 @@
 import React from 'react'
 
-import PropTypes from 'prop-types'
-
 import { faFacebook, faGithub, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -11,16 +9,16 @@ const SocialMedia = () => {
     return (
         <div className="social-media-container">
             <ul>
-                <li><a href="https://www.facebook.com" target='_blank' rel="noreferrer">
+                <li><a href="https://www.facebook.com">
                 <FontAwesomeIcon icon={faFacebook} />
                 </a></li>
-                <li><a href="https://www.instagram.com" target='_blank' rel="noreferrer">
+                <li><a href="https://www.instagram.com">
                 <FontAwesomeIcon icon={faInstagram} />
                 </a></li>
-                <li><a href="https://twitter.com" target='_blank' rel="noreferrer">
+                <li><a href="https://twitter.com">
                 <FontAwesomeIcon icon={faTwitter} />
                 </a></li>
-                <li><a href="https://github.com" target='_blank' rel="noreferrer">
+                <li><a href="https://github.com" >
                 <FontAwesomeIcon icon={faGithub} />
                 </a></li>
             </ul>
