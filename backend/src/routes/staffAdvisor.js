@@ -3,6 +3,7 @@ var router = express.Router();
 const TimeTable = require(__dirname+'/../models/TimeTable');
 // const CodeToName = require('../models/CodeToName');
 const Courses = require(__dirname+'/../models/Courses');
+const StaffAdvisor = require(__dirname+'/../models/StaffAdvisor');
 
 // returns the time table on request from the staffadvisor dashboard for display
 router.post('/facdashboard/DisplayTimeTable', async (req, res) => {
@@ -84,6 +85,14 @@ router.post('/facdashboard/TimeTable', async (req, res) => {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+router.post('/facdashboard/semesterCourses', async(req, res) => {
+  const {_id} = req.body;
+  const findStaffAdvisor = await StaffAdvisor.findOne({_id:_id});
+  const semesterCourses = await Courses.find({ semester: findStaffAdvisor.semesterHandled }, { _id: 1, courseName: 1 });
+  console.log(semesterCourses);
+  return res.json(semesterCourses);
 });
 
 module.exports = router;
