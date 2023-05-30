@@ -23,6 +23,10 @@ import {
   TablePagination,
   Select,
   CircularProgress,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Dialog,
 } from '@mui/material';
 import Label from '../components/label';
 import Scrollbar from '../components/scrollbar';
@@ -40,6 +44,7 @@ const TABLE_HEAD = [
 
 export default function AttendanceSetting() {
 
+  const [dataSendSuccess, setDataSendSuccess] = useState(false);
   const { facsemdata } = useContext(FacultyDataContext);
   const [selectedOpt, setSelectedOpt] = useState("");
   const [semester, setSemester] = useState(0);
@@ -212,7 +217,12 @@ export default function AttendanceSetting() {
         body: JSON.stringify(attendanceData),
       });
 
-      if (!response.ok) {
+      if(response.ok)
+      {
+        setDataSendSuccess(true);
+      }
+
+      else  {
         throw new Error('Error: Attendance submission failed');
       }
 
@@ -223,39 +233,44 @@ export default function AttendanceSetting() {
     }
   };
 
+  const handleDataSendSuccessClose = () => {
+    setDataSendSuccess(false);
+    window.location.reload();
+  };
+
   return (
     <>
-      
-        <Helmet>
-          <title>Attendance Settings</title>
-        </Helmet>
-        <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-            <Typography variant="h4">Attendance Settings</Typography>
-          </Stack>
-          <Stack direction="row" spacing={2}>
-            <Typography variant="subtitle1">Select Details:</Typography>
-            <Select value={selectedOpt} onChange={handleSelectOption}>
-              {facsemdata.facultyDetails.coursesHandled.map((course) => (
-                <MenuItem key={course._id} value={course}>
-                  Semester: {course.semester} | Batch: {course.batch} | Course Code: {course.courseCode}
-                </MenuItem>
-              ))}
-            </Select>
-          </Stack>
 
-          {loading ? ( 
-            <div  style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minHeight: '300px', // Set a minimum height for the container
-                }}>
-              <CircularProgress />
-            </div>
-            
-          ) : (
-            < Card >
+      <Helmet>
+        <title>Attendance Settings</title>
+      </Helmet>
+      <Container>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Typography variant="h4">Attendance Settings</Typography>
+        </Stack>
+        <Stack direction="row" spacing={2}>
+          <Typography variant="subtitle1">Select Details:</Typography>
+          <Select value={selectedOpt} onChange={handleSelectOption}>
+            {facsemdata.facultyDetails.coursesHandled.map((course) => (
+              <MenuItem key={course._id} value={course}>
+                Semester: {course.semester} | Batch: {course.batch} | Course Code: {course.courseCode}
+              </MenuItem>
+            ))}
+          </Select>
+        </Stack>
+
+        {loading ? (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '300px', // Set a minimum height for the container
+          }}>
+            <CircularProgress />
+          </div>
+
+        ) : (
+          < Card >
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
@@ -266,7 +281,7 @@ export default function AttendanceSetting() {
                         <TableCell
                           key={headCell.id}
                           align={headCell.alignRight ? 'right' : 'left'}
-                          // sortDirection={orderBy === headCell.id ? order : false}
+                        // sortDirection={orderBy === headCell.id ? order : false}
                         >
                           {headCell.label}
                         </TableCell>
@@ -351,8 +366,23 @@ export default function AttendanceSetting() {
               </Button>
             </Scrollbar>
           </Card>)}
+
+
+
+        <Dialog open={dataSendSuccess} onClose={handleDataSendSuccessClose}>
+          <DialogTitle>Attendance submitted</DialogTitle>
+          <DialogContent>
+            <p>The attendance data was submitted to the database.</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDataSendSuccessClose} color="primary" autoFocus>
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+
       </Container>
-    
+
     </>
   );
 }

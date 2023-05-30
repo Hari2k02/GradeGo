@@ -9,7 +9,7 @@ function Account() {
   const {name} = hellodata;
   const acc = {
     displayName: `${name.name.firstName} ${name.name.lastName}`,
-    email: 'sdivakaran@cet.ac.in',
+    email: `${name.email}`,
     photoURL: '/assets/images/avatars/avatar_default.jpg',
   };
 
