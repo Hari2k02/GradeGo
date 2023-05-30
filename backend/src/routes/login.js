@@ -38,32 +38,33 @@ router.post('/login', async (req, res) => {
         //check whether the person is a teacher or a student
         // check whether the person is in the student table
         const isStudent = await Student.findOne({ _id: ktuId });
-        console.log(isStudent);
+        // console.log(isStudent);
         if (ktuId === 'admin') {
           return res.json({ status: 'ok', user: 'admin', accessToken: accessToken, refreshToken: refreshToken });
         }
         if (isStudent) {
           const studentCourses = await StudentCourses.findOne({ _id: ktuId });
-          const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1});
-          const nameDetails = await Student.findOne({ _id: ktuId},{name:1,email:1});
-          return res.json({ status: 'ok', user: 'student',name:nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
+          const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1 });
+          const nameDetails = await Student.findOne({ _id: ktuId }, { name: 1, email: 1 });
+          return res.json({ status: 'ok', user: 'student', name: nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
         } else {
           const isFaculty = await Faculty.findOne({ _id: ktuId });
 
-
-          const isStaffAdvisor = Faculty.findOne({ _id: ktuId, roles: [{ roleName: 'Staff Advisor' }] });
-          const nameDetail = await Faculty.findOne({ _id: ktuId},{name:1,email:1});
+          const isStaffAdvisor = await Faculty.findOne(
+            { _id: ktuId, 'roles.roleName': 'Staff Advisor' }, { _id: 1 });
+          const nameDetail = await Faculty.findOne({ _id: ktuId }, { name: 1, email: 1 });
           if (isFaculty) {
             if (isStaffAdvisor) {
+              console.log('hello world guys');
               const staffDetails = await StaffAdvisor.findOne({ _id: ktuId });
               //console.log(staffDetails);
               // const courseDetails = await CodeToName.findOne({_id:staffDetails.semesterHandled});
               const courseDetails = await Courses.find({ semester: staffDetails.semesterHandled });
               //console.log(courseDetails);
-              return res.json({ status: 'ok', user: 'faculty',name:nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
+              return res.json({ status: 'ok', user: 'faculty', name: nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
             }
             else {
-              return res.json({ status: 'ok', user: 'faculty',name:nameDetail, accessToken: accessToken, refreshToken: refreshToken });
+              return res.json({ status: 'ok', user: 'faculty', name: nameDetail, accessToken: accessToken, refreshToken: refreshToken });
             }
           }
           else {
