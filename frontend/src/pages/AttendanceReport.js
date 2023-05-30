@@ -78,24 +78,26 @@ const AttendanceReport = () => {
       <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
         {courses.map((course) => (
           <MenuItem key={course._id} value={course._id}>
-            {course.courseName}
+            {course._id} - {course.courseName}
           </MenuItem>
         ))}
       </Select>
 
-      {isLoading &&
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '300px',
-        flexDirection: 'column',
-        gap: '1rem' // Set a minimum height for the container
-      }}>
-        <CircularProgress />
-        <Typography>Loading Attendance Data...</Typography>
-      </div>
-      }
+      {isLoading && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '300px',
+            flexDirection: 'column',
+            gap: '1rem', // Set a minimum height for the container
+          }}
+        >
+          <CircularProgress />
+          <Typography>Loading Attendance Data...</Typography>
+        </div>
+      )}
 
       {!isLoading && attendanceData.length === 0 && (
         <Typography>No attendance data available.</Typography>
@@ -105,6 +107,7 @@ const AttendanceReport = () => {
         <Table style={{ marginBottom: '2rem' }}>
           <TableHead>
             <TableRow>
+              <TableCell align="center">Roll Number</TableCell>
               <TableCell align="center">Student Name</TableCell>
               <TableCell align="center">Present Days</TableCell>
               <TableCell align="center">Total Days</TableCell>
@@ -112,15 +115,18 @@ const AttendanceReport = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {attendanceData.map((student) => (
+            {attendanceData.map((student, index) => (
               <TableRow key={student._id}>
+                <TableCell align="center">{index + 1}</TableCell>
                 <TableCell align="center">{`${student.name.name.firstName} ${student.name.name.lastName}`}</TableCell>
                 <TableCell align="center">{student.presentDays}</TableCell>
                 <TableCell align="center">{student.totalDays}</TableCell>
                 <TableCell align="center">
-                  {student.totalDays === 0
-                    ? 'N/A' // Display 'N/A' if totalDays is 0
-                    : `${Math.round((student.presentDays / student.totalDays) * 100)}%`}
+                  {student.totalDays === 0 ? (
+                    'N/A' // Display 'N/A' if totalDays is 0
+                  ) : (
+                    `${Math.round((student.presentDays / student.totalDays) * 100)}%`
+                  )}
                 </TableCell>
               </TableRow>
             ))}
