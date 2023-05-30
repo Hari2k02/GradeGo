@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Select, MenuItem, CircularProgress } from '@mui/material';
+import {
+  Typography,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Select,
+  MenuItem,
+  CircularProgress,
+} from '@mui/material';
 import { DataContext } from '../DataContext';
 
 const AttendanceReport = () => {
@@ -24,13 +34,11 @@ const AttendanceReport = () => {
         if (response.ok) {
           const data = await response.json();
           setCourses(data);
-          setSelectedClass(data.length > 0 ? data[0]._id : ''); // Set the first item as selected by default
+          setSelectedClass(data.length > 0 ? data[0]._id : '');
         } else {
-          // Handle error response
           console.error('Error fetching courses');
         }
       } catch (error) {
-        // Handle fetch error
         console.error('Error fetching courses:', error);
       }
     };
@@ -38,35 +46,40 @@ const AttendanceReport = () => {
     fetchCourses();
   }, []);
 
-  const handleClassChange = async (event) => {
-    const selectedValue = event.target.value;
-    setSelectedClass(selectedValue);
+  useEffect(() => {
+    const fetchAttendanceData = async () => {
+      try {
+        setIsLoading(true);
 
-    try {
-      setIsLoading(true); // Set loading state
+        const response = await fetch('http://localhost:1337/facdashboard/studentAttendance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ _id: hellodata.details._id, courseCode: selectedClass }),
+        });
 
-      const response = await fetch('http://localhost:1337/facdashboard/studentAttendance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ _id: hellodata.details._id, courseCode: selectedValue }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAttendanceData(data);
-        console.log(data);
-      } else {
-        // Handle error response
-        console.error('Error fetching attendance data');
+        if (response.ok) {
+          const data = await response.json();
+          setAttendanceData(data);
+          console.log(data);
+        } else {
+          console.error('Error fetching attendance data');
+        }
+      } catch (error) {
+        console.error('Error fetching attendance data:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      // Handle fetch error
-      console.error('Error fetching attendance data:', error);
-    } finally {
-      setIsLoading(false); // Reset loading state
+    };
+
+    if (selectedClass) {
+      fetchAttendanceData();
     }
+  }, [selectedClass]);
+
+  const handleClassChange = (event) => {
+    setSelectedClass(event.target.value);
   };
 
   return (
@@ -83,7 +96,7 @@ const AttendanceReport = () => {
         ))}
       </Select>
 
-      {isLoading && (
+      {isLoading ? (
         <div
           style={{
             display: 'flex',
@@ -91,19 +104,15 @@ const AttendanceReport = () => {
             justifyContent: 'center',
             minHeight: '300px',
             flexDirection: 'column',
-            gap: '1rem', // Set a minimum height for the container
+            gap: '1rem',
           }}
         >
           <CircularProgress />
           <Typography>Loading Attendance Data...</Typography>
         </div>
-      )}
-
-      {!isLoading && attendanceData.length === 0 && (
+      ) : attendanceData.length === 0 ? (
         <Typography>No attendance data available.</Typography>
-      )}
-
-      {!isLoading && attendanceData.length > 0 && (
+      ) : (
         <Table style={{ marginBottom: '2rem' }}>
           <TableHead>
             <TableRow>
@@ -122,11 +131,7 @@ const AttendanceReport = () => {
                 <TableCell align="center">{student.presentDays}</TableCell>
                 <TableCell align="center">{student.totalDays}</TableCell>
                 <TableCell align="center">
-                  {student.totalDays === 0 ? (
-                    'N/A' // Display 'N/A' if totalDays is 0
-                  ) : (
-                    `${Math.round((student.presentDays / student.totalDays) * 100)}%`
-                  )}
+                  {student.totalDays === 0 ? 'N/A' : `${Math.round((student.presentDays / student.totalDays) * 100)}%`}
                 </TableCell>
               </TableRow>
             ))}
