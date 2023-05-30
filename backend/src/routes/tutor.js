@@ -59,19 +59,35 @@ router.post('/tutor/attendance', async (req, res) => {
   // const isPresent = true;
   try {
     const data = req.body;
-    // console.log(data);
+    console.log(data);
     // data is an array of objects
     for (let i = 0; i < data.length; ++i) {
       const { _id, courseCode, date, hour, isPresent } = data[i];
       console.log(data[i]);
-      const addAttendance = await InternalMark.updateOne({ _id: _id, 'courseAssessmentTheory.courseCode': courseCode }, { $push: { 'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent } } });
-      console.log(addAttendance);
-      if(addAttendance) {
-        res.json({status:'ok'});
+      const checkDuplicate = await InternalMark.findOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode,'courseAssessmentTheory.attendance.date':date,'courseAssessmentTheory.attendance.hour':hour});
+      if(!checkDuplicate) {
+        console.log('no duplicate');
+        const addAttendance = await InternalMark.updateOne({ _id: _id, 'courseAssessmentTheory.courseCode': courseCode }, { $push: { 'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent } } });
+        console.log(addAttendance);
+        if(addAttendance) {
+          res.json({status:'ok'});
+        }
+        else{
+          res.json({status:'error'});
+        }
       }
       else{
-        res.json({status:'error'});
+        console.log('there is a duplicate');
+        const updateAttendance = await InternalMark.updateOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode},{$set:{'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent }}});
+        if(updateAttendance) {
+          res.json({status:'ok'});
+        }
+        else{
+          res.json({status:'error'});
+        }
       }
+      
+      
     }
   }
   catch (error) {
