@@ -4,7 +4,6 @@ const InternalMark = require(__dirname+'/../models/InternalMark');
 const FacultyCourses = require(__dirname+'/../models/FacultyCourses');
 const StudentCourses = require(__dirname+'/../models/StudentCourses');
 const Students = require(__dirname+'/../models/Student');
-const Student = require(__dirname+'/../models/Student');
 
 // return all students of the given semester, course and 
 router.post('/tutor/attendancedata', async (req, res) => {
@@ -19,7 +18,7 @@ router.post('/tutor/attendancedata', async (req, res) => {
     let studentsList = [];
     for (let i = 0; i < students.length; ++i) {
       const studentId = await StudentCourses.findOne({ _id: students[i]._id, 'coursesEnrolled.semesterCourses.courseCode': courseCode }, { _id: 1 });
-      const studentNameList = await Student.findOne({ _id: studentId }, { _id: 1, name: 1 });
+      const studentNameList = await Students.findOne({ _id: studentId }, { _id: 1, name: 1 });
       if (studentNameList) {
         studentsList.push(studentNameList);
       }
