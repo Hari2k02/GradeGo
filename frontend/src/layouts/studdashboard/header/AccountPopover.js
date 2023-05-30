@@ -3,8 +3,8 @@ import { useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
+import Account from '../../../_mock/account';
 // mocks_
-import account from '../../../_mock/account';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +26,8 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+
+  const account = Account();
   const [open, setOpen] = useState(null);
 
   const handleOpen = (event) => {
