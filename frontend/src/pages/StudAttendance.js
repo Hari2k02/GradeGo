@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Grid, Select, MenuItem, InputLabel, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Grid,  MenuItem, TextField, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { DataContext } from '../DataContext';
 
 import {
@@ -45,8 +45,8 @@ export default function StudAttendance() {
         const data = await response.json();
         setAttendanceData(data);
         setLoading(false);
-      } 
-      
+      }
+
       else {
         // Handle error response
         console.log('Error:', response.status);
@@ -69,25 +69,26 @@ export default function StudAttendance() {
     <>
       <Grid item xs={12} md={6} lg={4}>
         {/* Dropdown to select course */}
+
         <FormControl fullWidth>
-          <InputLabel id="course-select-label">Select a Course</InputLabel>
-          <Select
-            labelId="course-select-label"
+          <TextField
             id="course-select"
+            select
+            label="Select a Course"
             value={selectedCourse}
             onChange={handleCourseChange}
-            displayEmpty
+            SelectProps={{
+              displayEmpty: true
+            }}
           >
-            <MenuItem value="" disabled>
-              Select a Course
-            </MenuItem>
             {hellodata.details.studentCourses.coursesEnrolled[0].semesterCourses.map((course) => (
               <MenuItem key={course._id} value={course.courseCode}>
                 {course.courseCode}
               </MenuItem>
             ))}
-          </Select>
+          </TextField>
         </FormControl>
+
         {loading ? (
           <div style={{
             display: 'flex',
