@@ -9,8 +9,10 @@ import {
   Select,
   MenuItem,
   CircularProgress,
+  Button,
 } from '@mui/material';
 import { DataContext } from '../DataContext';
+import ExcelJS from 'exceljs';
 
 const AttendanceReport = () => {
   const [selectedClass, setSelectedClass] = useState('');
@@ -62,7 +64,6 @@ const AttendanceReport = () => {
         if (response.ok) {
           const data = await response.json();
           setAttendanceData(data);
-          console.log(data);
         } else {
           console.error('Error fetching attendance data');
         }
@@ -80,6 +81,73 @@ const AttendanceReport = () => {
 
   const handleClassChange = (event) => {
     setSelectedClass(event.target.value);
+  };
+
+  const handleGenerateReport = async () => {
+    if (attendanceData.length === 0) {
+      console.error('No attendance data available');
+      return;
+    }
+  
+    const selectedCourse = courses.find((course) => course._id === selectedClass);
+    const fileName = `${selectedCourse._id} - ${selectedCourse.courseName}.xlsx`;
+  
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(selectedCourse.courseName);
+  
+    // Define column widths
+    worksheet.getColumn(1).width = 12;
+    worksheet.getColumn(2).width = 30;
+    worksheet.getColumn(3).width = 15;
+    worksheet.getColumn(4).width = 15;
+    worksheet.getColumn(5).width = 20;
+  
+    // Add headers with formatting
+    const headerRow = worksheet.addRow([
+      'Roll Number',
+      'Student Name',
+      'Present Days',
+      'Total Days',
+      'Percentage Present',
+    ]);
+    headerRow.font = { bold: true };
+    headerRow.alignment = { horizontal: 'center' };
+    // Add data rows with formatting
+    attendanceData.forEach((student, index) => {
+      const dataRow = worksheet.addRow([
+        index + 1,
+        `${student.name.name.firstName} ${student.name.name.lastName}`,
+        student.presentDays,
+        student.totalDays,
+        student.totalDays === 0 ? 'N/A' : `${Math.round((student.presentDays / student.totalDays) * 100)}`,
+      ]);
+      dataRow.alignment = { horizontal: 'center' };
+    });
+    // Auto-fit column widths to content
+    worksheet.columns.forEach((column) => {
+      column.width = Math.max(column.width, 12); // Minimum column width of 12
+    });
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAsExcelFile(buffer, fileName);
+  };
+  
+
+  const saveAsExcelFile = (buffer, fileName) => {
+    const data = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+    if (navigator.msSaveBlob) {
+      // IE workaround
+      navigator.msSaveBlob(data, fileName);
+    } else {
+      // For modern browsers
+      const url = window.URL.createObjectURL(data);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -113,30 +181,35 @@ const AttendanceReport = () => {
       ) : attendanceData.length === 0 ? (
         <Typography>No attendance data available.</Typography>
       ) : (
-        <Table style={{ marginBottom: '2rem' }}>
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">Roll Number</TableCell>
-              <TableCell align="center">Student Name</TableCell>
-              <TableCell align="center">Present Days</TableCell>
-              <TableCell align="center">Total Days</TableCell>
-              <TableCell align="center">Percentage Present</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {attendanceData.map((student, index) => (
-              <TableRow key={student._id}>
-                <TableCell align="center">{index + 1}</TableCell>
-                <TableCell align="center">{`${student.name.name.firstName} ${student.name.name.lastName}`}</TableCell>
-                <TableCell align="center">{student.presentDays}</TableCell>
-                <TableCell align="center">{student.totalDays}</TableCell>
-                <TableCell align="center">
-                  {student.totalDays === 0 ? 'N/A' : `${Math.round((student.presentDays / student.totalDays) * 100)}%`}
-                </TableCell>
+        <>
+          <Table style={{ marginBottom: '2rem' }}>
+            <TableHead>
+              <TableRow>
+                <TableCell align="center">Roll Number</TableCell>
+                <TableCell align="center">Student Name</TableCell>
+                <TableCell align="center">Present Days</TableCell>
+                <TableCell align="center">Total Days</TableCell>
+                <TableCell align="center">Percentage Present</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {attendanceData.map((student, index) => (
+                <TableRow key={student._id}>
+                  <TableCell align="center">{index + 1}</TableCell>
+                  <TableCell align="center">{`${student.name.name.firstName} ${student.name.name.lastName}`}</TableCell>
+                  <TableCell align="center">{student.presentDays}</TableCell>
+                  <TableCell align="center">{student.totalDays}</TableCell>
+                  <TableCell align="center">
+                    {student.totalDays === 0 ? 'N/A' : `${Math.round((student.presentDays / student.totalDays) * 100)}%`}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button variant="contained" color="primary" onClick={handleGenerateReport} style={{ display: 'block', margin: 'auto' }}>
+            Generate course attendance report
+          </Button>
+        </>
       )}
     </div>
   );
