@@ -7,7 +7,7 @@ import './primary-pink-button.css'
 const PrimaryPinkButton = (props) => {
   return (
     <div className="primary-pink-button-container">
-      <button className="primary-pink-button-button button ButtonSmall">
+      <button className="primary-pink-button-button button ButtonSmall" style={{ borderRadius: '1.875rem' , color:'white' }}>
         {props.button}
       </button>
     </div>

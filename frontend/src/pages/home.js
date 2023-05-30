@@ -3,7 +3,6 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 
 import Header from '../components/landingpage/header'
-import OutlineGrayButton from '../components/landingpage/outline-gray-button'
 import FeatureCard from '../components/landingpage/feature-card'
 import Footer from '../components/landingpage/footer'
 import './home.css'
@@ -26,9 +25,6 @@ const Home = () => {
                 Effortlessly Monitor, Measure, and Maximize Your Academic Success with GradeGo!
               </span>
             </span>
-            <div className="home-container02">
-              <OutlineGrayButton button="know more"></OutlineGrayButton>
-            </div>
           </div>
         </div>
       </div>
