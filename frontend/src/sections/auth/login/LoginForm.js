@@ -17,6 +17,7 @@ export default function LoginForm() {
     useEffect(() => {
     // Clear the hellodata in local storage when the component mounts
     localStorage.removeItem('hellodata');
+    localStorage.removeItem('facsemdata');
     // setHelloData({ accessToken: '', course: [], details: null, status: '', user: '' });
   }, []);
   let data={};
