@@ -8,7 +8,7 @@ import './social-media.css'
 const SocialMedia = () => {
     return (
         <div className="social-media-container">
-            <ul>
+            <ul className="ulist">
                 <li><a href="https://www.facebook.com">
                 <FontAwesomeIcon icon={faFacebook} />
                 </a></li>
