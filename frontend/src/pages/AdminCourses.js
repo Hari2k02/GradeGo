@@ -175,7 +175,7 @@ const AdminCourses = () => {
   };
 
   const filterFacultiesByName = (faculty) => {
-    const fullName = `${faculty.name.first_name} ${faculty.name.middle_name} ${faculty.name.last_name}`;
+    const fullName = `${faculty.name.firstName} ${faculty.name.middleName} ${faculty.name.lastName}`;
     return fullName.toLowerCase().includes(searchQuery.toLowerCase());
   };
 
@@ -272,7 +272,7 @@ const AdminCourses = () => {
                     .map((faculty) => (
                       <TableRow key={faculty._id}>
                         <TableCell>{faculty._id}</TableCell>
-                        <TableCell>{`${faculty.name.first_name} ${faculty.name.middle_name} ${faculty.name.last_name}`}</TableCell>
+                        <TableCell>{`${faculty.name.firstName} ${faculty.name.middleName} ${faculty.name.lastName}`}</TableCell>
                         <TableCell>
                           <Button
                             variant="outlined"
