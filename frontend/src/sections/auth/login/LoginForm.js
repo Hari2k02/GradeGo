@@ -35,8 +35,7 @@ export default function LoginForm() {
     });
 
     data = await response.json();
-    
-    setHelloData(data); 
+    setHelloData(data);
     if (data.status === 'ok') {
       console.log(hellodata);
       if (data.user === 'student' ) {
@@ -50,9 +49,7 @@ export default function LoginForm() {
     if(data.status!='ok') {
       alert("Incorrect username or password");
     }
-    
   }
-    
   const navigate = useNavigate();
 
 
