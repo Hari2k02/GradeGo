@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Select, MenuItem } from '@mui/material';
+import { Typography, Table, TableHead, TableBody, TableRow, TableCell, Select, MenuItem, CircularProgress } from '@mui/material';
 import { DataContext } from '../DataContext';
 
 const AttendanceReport = () => {
   const [selectedClass, setSelectedClass] = useState('');
   const [courses, setCourses] = useState([]);
   const [attendanceData, setAttendanceData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { hellodata } = useContext(DataContext);
 
@@ -42,6 +43,8 @@ const AttendanceReport = () => {
     setSelectedClass(selectedValue);
 
     try {
+      setIsLoading(true); // Set loading state
+
       const response = await fetch('http://localhost:1337/facdashboard/studentAttendance', {
         method: 'POST',
         headers: {
@@ -61,6 +64,8 @@ const AttendanceReport = () => {
     } catch (error) {
       // Handle fetch error
       console.error('Error fetching attendance data:', error);
+    } finally {
+      setIsLoading(false); // Reset loading state
     }
   };
 
@@ -78,23 +83,41 @@ const AttendanceReport = () => {
         ))}
       </Select>
 
-      {attendanceData.length > 0 && (
+      {isLoading &&
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '300px',
+        flexDirection: 'column',
+        gap: '1rem' // Set a minimum height for the container
+      }}>
+        <CircularProgress />
+        <Typography>Loading Attendance Data...</Typography>
+      </div>
+      }
+
+      {!isLoading && attendanceData.length === 0 && (
+        <Typography>No attendance data available.</Typography>
+      )}
+
+      {!isLoading && attendanceData.length > 0 && (
         <Table style={{ marginBottom: '2rem' }}>
           <TableHead>
             <TableRow>
-              <TableCell>Student Name</TableCell>
-              <TableCell>Present Days</TableCell>
-              <TableCell>Total Days</TableCell>
-              <TableCell>Percentage Present</TableCell>
+              <TableCell align="center">Student Name</TableCell>
+              <TableCell align="center">Present Days</TableCell>
+              <TableCell align="center">Total Days</TableCell>
+              <TableCell align="center">Percentage Present</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {attendanceData.map((student) => (
               <TableRow key={student._id}>
-                <TableCell>{`${student.name.name.firstName} ${student.name.name.lastName}`}</TableCell>
-                <TableCell>{student.presentDays}</TableCell>
-                <TableCell>{student.totalDays}</TableCell>
-                <TableCell>
+                <TableCell align="center">{`${student.name.name.firstName} ${student.name.name.lastName}`}</TableCell>
+                <TableCell align="center">{student.presentDays}</TableCell>
+                <TableCell align="center">{student.totalDays}</TableCell>
+                <TableCell align="center">
                   {student.totalDays === 0
                     ? 'N/A' // Display 'N/A' if totalDays is 0
                     : `${Math.round((student.presentDays / student.totalDays) * 100)}%`}
