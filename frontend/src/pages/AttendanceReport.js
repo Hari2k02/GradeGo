@@ -10,15 +10,28 @@ import {
   MenuItem,
   CircularProgress,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from '@mui/material';
 import { DataContext } from '../DataContext';
 import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 const AttendanceReport = () => {
   const [selectedClass, setSelectedClass] = useState('');
   const [courses, setCourses] = useState([]);
   const [attendanceData, setAttendanceData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedFormat, setSelectedFormat] = useState('');
 
   const { hellodata } = useContext(DataContext);
 
@@ -83,25 +96,44 @@ const AttendanceReport = () => {
     setSelectedClass(event.target.value);
   };
 
-  const handleGenerateReport = async () => {
+  const handleGenerateReport = () => {
     if (attendanceData.length === 0) {
       console.error('No attendance data available');
       return;
     }
-  
+
+    setOpenDialog(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+    setSelectedFormat('');
+  };
+
+  const handleDownload = () => {
+    if (selectedFormat === 'pdf') {
+      generatePDFReport();
+    } else if (selectedFormat === 'xlsx') {
+      generateExcelReport();
+    }
+
+    handleDialogClose();
+  };
+
+  const generateExcelReport = () => {
     const selectedCourse = courses.find((course) => course._id === selectedClass);
-    const fileName = `${selectedCourse._id} - ${selectedCourse.courseName}.xlsx`;
-  
+    const fileName = `${selectedCourse._id} - ${selectedCourse.courseName}`;
+
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(selectedCourse.courseName);
-  
+
     // Define column widths
     worksheet.getColumn(1).width = 12;
     worksheet.getColumn(2).width = 30;
     worksheet.getColumn(3).width = 15;
     worksheet.getColumn(4).width = 15;
     worksheet.getColumn(5).width = 20;
-  
+
     // Add headers with formatting
     const headerRow = worksheet.addRow([
       'Roll Number',
@@ -112,6 +144,7 @@ const AttendanceReport = () => {
     ]);
     headerRow.font = { bold: true };
     headerRow.alignment = { horizontal: 'center' };
+
     // Add data rows with formatting
     attendanceData.forEach((student, index) => {
       const dataRow = worksheet.addRow([
@@ -123,31 +156,49 @@ const AttendanceReport = () => {
       ]);
       dataRow.alignment = { horizontal: 'center' };
     });
+
     // Auto-fit column widths to content
     worksheet.columns.forEach((column) => {
       column.width = Math.max(column.width, 12); // Minimum column width of 12
     });
-    const buffer = await workbook.xlsx.writeBuffer();
-    saveAsExcelFile(buffer, fileName);
+
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `${fileName}.xlsx`);
+    });
   };
-  
 
-  const saveAsExcelFile = (buffer, fileName) => {
-    const data = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const generatePDFReport = () => {
+    const selectedCourse = courses.find((course) => course._id === selectedClass);
+    const fileName = `${selectedCourse._id} - ${selectedCourse.courseName}`;
 
-    if (navigator.msSaveBlob) {
-      // IE workaround
-      navigator.msSaveBlob(data, fileName);
-    } else {
-      // For modern browsers
-      const url = window.URL.createObjectURL(data);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    const doc = new jsPDF();
+
+    // Add title
+    doc.setFontSize(16);
+    doc.text('Attendance Report', 15, 15);
+
+    // Add course details
+    doc.setFontSize(12);
+    doc.text(`${selectedCourse._id} - ${selectedCourse.courseName}`, 15, 25);
+
+    // Add table headers
+    const headers = ['Roll Number', 'Student Name', 'Present Days', 'Total Days', 'Percentage Present'];
+    const data = attendanceData.map((student, index) => [
+      index + 1,
+      `${student.name.name.firstName} ${student.name.name.lastName}`,
+      student.presentDays,
+      student.totalDays,
+      student.totalDays === 0 ? 'N/A' : `${Math.round((student.presentDays / student.totalDays) * 100)}%`,
+    ]);
+
+    doc.autoTable({
+      head: [headers],
+      body: data,
+      startY: 30,
+    });
+
+    doc.save(`${fileName}.pdf`);
   };
 
   return (
@@ -211,6 +262,24 @@ const AttendanceReport = () => {
           </Button>
         </>
       )}
+
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Download Format</DialogTitle>
+        <DialogContent>
+          <FormControl component="fieldset">
+            <RadioGroup value={selectedFormat} onChange={(e) => setSelectedFormat(e.target.value)}>
+              <FormControlLabel value="pdf" control={<Radio />} label="PDF" />
+              <FormControlLabel value="xlsx" control={<Radio />} label="XLSX" />
+            </RadioGroup>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button onClick={handleDownload} disabled={!selectedFormat}>
+            Download
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
