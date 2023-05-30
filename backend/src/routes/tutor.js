@@ -65,6 +65,12 @@ router.post('/tutor/attendance', async (req, res) => {
       console.log(data[i]);
       const addAttendance = await InternalMark.updateOne({ _id: _id, 'courseAssessmentTheory.courseCode': courseCode }, { $push: { 'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent } } });
       console.log(addAttendance);
+      if(addAttendance) {
+        res.json({status:'ok'});
+      }
+      else{
+        res.json({status:'error'});
+      }
     }
   }
   catch (error) {

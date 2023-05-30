@@ -11,7 +11,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import TimeTable from './pages/TimeTable';
 import StudDashboardAppPage from './pages/StudDashboardAppPage';
 import StudAttendance from './pages/StudAttendance';
-import Attendance from './pages/Attendance';
+import AttendanceReport from './pages/AttendanceReport';
 import StudTimeTable from './pages/StudTimeTable';
 import AdminDashboardAppPage from './pages/AdminDashboardAppPage';
 import AdminDashboardLayout from './layouts/admindashboard';
@@ -40,7 +40,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" replace />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'attendance', element: <Attendance /> },
+        { path: 'attendance-report', element: <AttendanceReport /> },
         { path: 'attendance-setting', element: <AttendanceSetting /> },
         { path: 'timetable', element: <TimeTable /> },
       ],

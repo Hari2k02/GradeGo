@@ -11,9 +11,9 @@ const Header = (props) => {
     <div data-role="Header" className={`header-header ${props.rootClassName} `}>
       <nav className="header-nav">
         <div className="header-container">
-          <Link to="/" className="header-navlink Large">
-            GradeGo
-          </Link>
+        <Link to="/" className="header-navlink" style={{ fontSize: 'larger' }}>
+          GradeGo
+        </Link>
           <div className="header-menu">
             <Link to="/" className="header-navlink1 Large">
               Home
