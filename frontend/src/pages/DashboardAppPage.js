@@ -7,7 +7,6 @@ import { DataContext } from '../DataContext';
 import {
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
