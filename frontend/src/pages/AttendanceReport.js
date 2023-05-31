@@ -39,7 +39,7 @@ const AttendanceReport = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('http://localhost:1337/facdashboard/semesterCourses', {
+        const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/semesterCourses', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ const AttendanceReport = () => {
       try {
         setIsLoading(true);
 
-        const response = await fetch('http://localhost:1337/facdashboard/studentAttendance', {
+        const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/studentAttendance', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -104,6 +104,27 @@ const AttendanceReport = () => {
     }
 
     setOpenDialog(true);
+  };
+
+  const handleGenerateBatchExcelReport = async () => {
+    try {
+      const response = await fetch('http://localhost:1337/facdashboard/batchAttendanceReport', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ _id: hellodata.details._id }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Batch attendance report generated:', data);
+      } else {
+        console.error('Error generating batch attendance report');
+      }
+    } catch (error) {
+      console.error('Error generating batch attendance report:', error);
+    }
   };
 
   const handleDialogClose = () => {
@@ -208,12 +229,12 @@ const AttendanceReport = () => {
         <title>Attendance Report | GradeGo</title>
       </Helmet>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Attendance Report
-      </Typography>
-      <Button variant="contained" color="primary" onClick={handleGenerateReport}>
-        Generate Batch Attendance Report
-      </Button>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Attendance Report
+        </Typography>
+        <Button variant="contained" color="primary" onClick={handleGenerateBatchExcelReport}>
+          Generate Batch Attendance Report
+        </Button>
       </div>
 
       <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
