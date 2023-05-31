@@ -1,15 +1,20 @@
 import React from 'react'
 
 import { Helmet } from 'react-helmet'
-
+import { motion } from 'framer-motion'
 import Header from '../components/landingpage/header'
 import FeatureCard from '../components/landingpage/feature-card'
 import Footer from '../components/landingpage/footer'
 import './home.css'
-
+import {staggerContainer, fadeIn} from '../utils/motion'
 const Home = () => {
   return (
-    <div className="home-container">
+    <motion.div
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: false, amount: 0.25 }}
+      className="home-container">
       <Helmet>
         <title>GradeGo - Student Progress Tracker</title>
         <meta property="og:title" content="GradeGo" />
@@ -17,7 +22,9 @@ const Home = () => {
       <Header rootClassName="header-root-class-name"></Header>
       <div className="home-hero">
         <div className="home-container01">
-          <div className="home-card">
+          <motion.div 
+          variants={fadeIn("up","tween",0.3,1)}
+          className="home-card">
             <h1 className="home-text HeadingOne">GradeGo</h1>
             <h1 className="home-text01 HeadingOne">Empower Your Learning Journey</h1>
             <span className="home-text02 Lead">
@@ -25,10 +32,11 @@ const Home = () => {
                 Effortlessly Monitor, Measure, and Maximize Your Academic Success with GradeGo!
               </span>
             </span>
-          </div>
+          </motion.div>
         </div>
       </div>
-      <img
+      <motion.img
+        variants={fadeIn("left","tween",0.4,1)}
         alt="image"
         src="/playground_assets/curved5-1400w.jpg"
         loading="eager"
@@ -232,7 +240,7 @@ const Home = () => {
         </div>
       </section> */}
       <Footer></Footer>
-    </div>
+    </motion.div>
   )
 }
 
