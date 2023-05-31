@@ -164,5 +164,69 @@ router.post('/facdashboard/studentAttendance', async (req, res) => {
   }
 });
 
+router.post('/facdashboard/batchAttendanceReport', async (req, res) => {
+  const {_id} = req.body;
+
+  const semesterAndBatch = await StaffAdvisor.findOne({ _id: _id }, { semesterHandled: 1, batchHandled: 1 });
+  const semester = semesterAndBatch.semesterHandled;
+  const batch = semesterAndBatch.batchHandled;
+  const students = await Students.find({ currentSemester: semester, batch: batch }, { _id: 1 });
+
+  const courses = await Courses.find({semester:semester}, {_id:1});
+
+  let finalOutput = [];
+  for(let i = 0; i < courses.length; i++) {
+    const courseCode = courses[i]._id;
+    let studentsList = [];
+    for (let i = 0; i < students.length; ++i) {
+      const studentId = await StudentCourses.findOne({ _id: students[i]._id, 'coursesEnrolled.semesterCourses.courseCode': courseCode }, { _id: 1 });
+      const studentNameList = await Students.findOne({ _id: studentId }, { _id: 1, name: 1 });
+      if (studentNameList) {
+        studentsList.push(studentNameList);
+      }
+    }
+
+    let ktuIds = studentsList.map(student => student._id); // Simplified array mapping
+
+    const results = await InternalMarks.aggregate([
+      { $unwind: '$courseAssessmentTheory' },
+      { $match: { _id: { $in: ktuIds }, 'courseAssessmentTheory.courseCode': courseCode } },
+      { $unwind: '$courseAssessmentTheory.attendance' },
+      {
+        $group: {
+          _id: '$_id',
+          presentDays: {
+            $sum: {
+              $cond: [
+                { $eq: ['$courseAssessmentTheory.attendance.isPresent', true] },
+                1,
+                0
+              ]
+            }
+          },
+          totalDays: { $sum: 1 }
+        }
+      }
+    ]).exec();
+
+    let output = [];
+    // Log the attendance statistics
+    for (let i = 0; i < results.length; ++i) {
+      const studentName = await Students.findOne({ _id: results[i]._id }, { name: 1 });
+      output.push({
+        '_id': results[i]._id,
+        'name': studentName.name,
+        'courseCode':courseCode,
+        'presentDays': results[i].presentDays,
+        'totalDays': results[i].totalDays
+      });
+    }
+    // return res.json(output);
+    if (output.length !== 0) {
+      finalOutput.push(output);
+    }
+  }
+  return res.json(finalOutput);
+});
 
 module.exports = router;
