@@ -131,16 +131,19 @@ db.internalmarks.update(
             date: ISODate("2023-04-17T00:00:00.000+00:00"),
             hour: 5,
             isPresent: true,
+            _id:ObjectId(),
           },
           {
             date: ISODate("2023-03-19T00:00:00.000+00:00"),
             hour: 6,
             isPresent: true,
+            _id:ObjectId(),
           },
           {
             date: ISODate("2023-04-19T00:00:00.000+00:00"),
             hour: 4,
             isPresent: true,
+            _id:ObjectId(),
           }
         ]
       }
