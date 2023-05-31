@@ -15,7 +15,7 @@ export default function StudDashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard | GradeGo </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -42,7 +42,7 @@ export default function StudDashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
+              title="Performance"
               subheader="(+43%) than last year"
               chartLabels={[
                 '01/01/2003',
@@ -82,12 +82,12 @@ export default function StudDashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Marks Percentage"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Lab', value: 4344 },
+                { label: 'Internal', value: 5435 },
+                { label: 'Series', value: 1443 },
+                { label: 'Semester', value: 4443 },
               ]}
               chartColors={[
                 theme.palette.primary.main,

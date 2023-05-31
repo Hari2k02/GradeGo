@@ -18,6 +18,7 @@ import {
   Button,
   TextField,
 } from '@mui/material';
+import { Helmet } from 'react-helmet-async';
 
 const AdminCourses = () => {
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -180,6 +181,10 @@ const AdminCourses = () => {
   };
 
   return (
+    <>
+    <Helmet>
+        <title>Course Setting | GradeGo</title>
+    </Helmet>
     <Container maxWidth="sm" style={{ marginTop: '20px', marginBottom: '20px' }}>
       <Typography variant="h4" align="center" gutterBottom style={{ marginBottom: '10px' }}>
         Faculty Courses
@@ -314,6 +319,7 @@ const AdminCourses = () => {
         </DialogActions>
       </Dialog>
     </Container>
+    </>
   );
 };
 

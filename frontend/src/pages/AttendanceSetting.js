@@ -228,7 +228,7 @@ export default function AttendanceSetting() {
   return (
     <>
       <Helmet>
-        <title>Attendance Settings</title>
+        <title>Attendance Settings | GradeGo</title>
       </Helmet>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
