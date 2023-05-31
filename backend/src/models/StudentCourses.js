@@ -29,7 +29,7 @@ const studentCourseSchema = new mongoose.Schema({
 
 module.exports = new mongoose.model('studentCourse', studentCourseSchema);
 /*
-db.studentCourses.insertOne({_id:'tve20cs000', coursesEnrolled:{semester:6, semesterCourses:[{courseCode:'CST301'}, {courseCode:'CST302'}, {courseCode:'CST303'}, {courseCode:'CST304'}]}})
+db.studentcourses.insertOne({_id:'tve20cs000', coursesEnrolled:{semester:6, semesterCourses:[{courseCode:'CST301'}, {courseCode:'CST302'}, {courseCode:'CST303'}, {courseCode:'CST304'} , {courseCode:'CST306'}, {courseCode:'CST308'}, {courseCode:'CST322'},{courseCode:'CST362'},{courseCode:'HUT300'}]}})
 
 
 db.studentcourses.update(
