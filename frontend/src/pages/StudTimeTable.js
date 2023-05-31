@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Stack } from '@mui/material';
 import { DataContext } from '../DataContext';
+import { Helmet } from 'react-helmet-async';
 
 const Timetable = () => {
     const { hellodata } = useContext(DataContext);
@@ -46,6 +47,9 @@ const Timetable = () => {
 
     return (
         <div>
+        <Helmet>
+        <title>Timetable | GradeGo</title>
+        </Helmet>
             {
                 
                     <div>

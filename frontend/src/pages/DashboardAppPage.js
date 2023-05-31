@@ -57,7 +57,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Dashboard | GradeGo </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -84,7 +84,7 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
+              title="Performance"
               subheader="(+43%) than last year"
               chartLabels={[
                 '01/01/2003',
@@ -124,12 +124,12 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Marks Percentage"
               chartData={[
-                { label: 'America', value: 410 },
-                { label: 'Asia', value: 123 },
-                { label: 'Europe', value: 34 },
-                { label: 'Africa', value: 323 },
+                { label: 'Lab', value: 410 },
+                { label: 'Internal', value: 123 },
+                { label: 'Series', value: 34 },
+                { label: 'Semester', value: 323 },
               ]}
               chartColors={[
                 theme.palette.primary.main,

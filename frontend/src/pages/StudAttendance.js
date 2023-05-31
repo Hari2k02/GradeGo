@@ -6,6 +6,7 @@ import { DataContext } from '../DataContext';
 import {
   AppCurrentVisits,
 } from '../sections/@dashboard/app';
+import { Helmet } from 'react-helmet-async';
 
 export default function StudAttendance() {
   const [loading, setLoading] = useState(false);
@@ -67,6 +68,9 @@ export default function StudAttendance() {
 
   return (
     <>
+    <Helmet>
+        <title>Student Attendance | GradeGo</title>
+      </Helmet>
       <Grid item xs={12} md={6} lg={4}>
         {/* Dropdown to select course */}
 

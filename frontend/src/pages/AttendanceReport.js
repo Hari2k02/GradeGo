@@ -24,6 +24,7 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import { Helmet } from 'react-helmet-async';
 
 const AttendanceReport = () => {
   const [selectedClass, setSelectedClass] = useState('');
@@ -203,6 +204,9 @@ const AttendanceReport = () => {
 
   return (
     <div>
+    <Helmet>
+        <title>Attendance Report | GradeGo</title>
+      </Helmet>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Attendance Report

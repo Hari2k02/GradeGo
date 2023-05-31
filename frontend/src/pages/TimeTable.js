@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Select, Typography, Stack } from '@mui/material';
 import { DataContext } from '../DataContext';
+import { Helmet } from 'react-helmet-async';
 
 const Timetable = () => {
     const { hellodata } = useContext(DataContext);
@@ -77,7 +78,7 @@ const Timetable = () => {
 
 
             if (response.ok) {
-                
+
                 console.log('Timetable saved successfully');
                 window.location.reload();
                 // Do something on success
@@ -100,6 +101,9 @@ const Timetable = () => {
     }
     return (
         <div>
+            <Helmet>
+                <title>Timetable | GradeGo</title>
+            </Helmet>
             {
                 viewTimeTableSet && (
                     <div>
