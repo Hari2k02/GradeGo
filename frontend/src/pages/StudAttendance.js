@@ -102,8 +102,8 @@ export default function StudAttendance() {
           <AppCurrentVisits
             title="Students Attendance"
             chartData={[
-              { label: 'Present', value: attendanceData?.presentCount || 0 },
-              { label: 'Absent', value: attendanceData?.totalAttendanceLength ? attendanceData.totalAttendanceLength - attendanceData.presentCount : 0 },
+              { label: 'Present', value: attendanceData[0]?.presentDays || 0 },
+              { label: 'Absent', value: attendanceData[0]?.totalDays ? attendanceData[0].totalDays - attendanceData[0].presentDays : 0 },
             ]}
             chartColors={[
               theme.palette.success.main,
