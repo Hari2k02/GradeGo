@@ -47,20 +47,7 @@ export default function AttendanceSetting() {
   const [batch, setBatch] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const handleSelectOption = (event) => {
-    const selectedValue = event.target.value;
-    const selectedOption = facsemdata.facultyDetails.coursesHandled.find(
-      (course) => course._id === selectedValue._id
-    );
 
-    if (selectedOption) {
-      setSemester(selectedOption.semester);
-      setCourseCode(selectedOption.courseCode);
-      setBatch(selectedOption.batch);
-    }
-
-    setSelectedOpt(selectedValue);
-  };
 
   const [userList, setUserList] = useState([]);
   const [page, setPage] = useState(0);
@@ -223,6 +210,21 @@ export default function AttendanceSetting() {
     window.location.reload();
   };
 
+
+  const handleSelectOption = (event) => {
+    const selectedValue = event.target.value;
+    const selectedOption = facsemdata.facultyDetails.coursesHandled.find(
+      (course) => course.courseCode === selectedValue
+    );
+
+    if (selectedOption) {
+      setSemester(selectedOption.semester);
+      setCourseCode(selectedOption.courseCode);
+      setBatch(selectedOption.batch);
+    }
+
+    setSelectedOpt(selectedValue);
+  };
   return (
     <>
       <Helmet>
@@ -236,18 +238,65 @@ export default function AttendanceSetting() {
           <TextField
             select
             fullWidth
-            label="Select Details"
-            value={selectedOpt}
-            onChange={handleSelectOption}
+            label="Select Semester"
+            value={semester}
+            onChange={(event) => setSemester(event.target.value)}
             variant="outlined"
           >
-            {facsemdata.facultyDetails.coursesHandled.map((course) => (
-              <MenuItem key={course._id} value={course}>
-                Semester: {course.semester} | Batch: {course.batch} | Course Code: {course.courseCode}
+            {Array.from(new Set(facsemdata.facultyDetails.coursesHandled.map((course) => course.semester))).map((semester) => (
+              <MenuItem key={semester} value={semester}>
+                Semester: {semester}
               </MenuItem>
             ))}
           </TextField>
+
+          {semester > 0 && (
+            <>
+              <TextField
+                select
+                fullWidth
+                label="Select Batch"
+                value={batch}
+                onChange={(event) => setBatch(event.target.value)}
+                variant="outlined"
+              >
+                {Array.from(
+                  new Set(
+                    facsemdata.facultyDetails.coursesHandled
+                      .filter((course) => course.semester === semester)
+                      .map((course) => course.batch)
+                  )
+                ).map((batch) => (
+                  <MenuItem key={batch} value={batch}>
+                    Batch: {batch}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                select
+                fullWidth
+                label="Select Course Code"
+                value={courseCode}
+                onChange={(event) => {
+                  setCourseCode(event.target.value);
+                  handleSelectOption(event); 
+                }}
+                variant="outlined"
+              >
+                {facsemdata.facultyDetails.coursesHandled
+                  .filter((course) => course.semester === semester && course.batch === batch)
+                  .map((course) => (
+                    <MenuItem key={course._id} value={course.courseCode}>
+                      Course Code: {course.courseCode}
+                    </MenuItem>
+                  ))}
+              </TextField>
+            </>
+          )}
         </Stack>
+
+
 
         {loading ? (
           <div
