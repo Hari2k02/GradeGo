@@ -67,7 +67,7 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
+          {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
           </Grid>
 
@@ -81,7 +81,7 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
