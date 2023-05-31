@@ -106,6 +106,7 @@ const AttendanceReport = () => {
     setOpenDialog(true);
   };
 
+
   const handleGenerateBatchExcelReport = async () => {
     try {
       const response = await fetch('http://localhost:1337/facdashboard/batchAttendanceReport', {
@@ -115,10 +116,87 @@ const AttendanceReport = () => {
         },
         body: JSON.stringify({ _id: hellodata.details._id }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         console.log('Batch attendance report generated:', data);
+  
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Batch Attendance Report');
+  
+        // Define column widths
+        worksheet.getColumn(1).width = 12;
+        worksheet.getColumn(2).width = 30;
+  
+        // Add headers for roll number and student name
+        const headerRow = worksheet.addRow(['Roll Number', 'Student Name']);
+        headerRow.font = { bold: true };
+        headerRow.alignment = { horizontal: 'center' };
+  
+        // Add attendance data column headers for each course
+        data.forEach((student) => {
+          student.courses.forEach((course, index) => {
+            const courseCode = course.courseCode;
+  
+            // Calculate the column index based on the course index
+            const columnIndex = 3 + index * 3;
+  
+            // Set column headers for present days, total days, and present percentage
+            worksheet.getCell(1, columnIndex).value = `${courseCode} - Present Days`;
+            worksheet.getCell(1, columnIndex).font = { bold: true };
+            worksheet.getCell(1, columnIndex).alignment = { horizontal: 'center' };
+            worksheet.getColumn(columnIndex).width = 15;
+  
+            worksheet.getCell(1, columnIndex + 1).value = `${courseCode} - Total Days`;
+            worksheet.getCell(1, columnIndex + 1).font = { bold: true };
+            worksheet.getCell(1, columnIndex + 1).alignment = { horizontal: 'center' };
+            worksheet.getColumn(columnIndex + 1).width = 15;
+  
+            worksheet.getCell(1, columnIndex + 2).value = `${courseCode} - Present Percentage`;
+            worksheet.getCell(1, columnIndex + 2).font = { bold: true };
+            worksheet.getCell(1, columnIndex + 2).alignment = { horizontal: 'center' };
+            worksheet.getColumn(columnIndex + 2).width = 15;
+          });
+        });
+  
+        // Add attendance data for each student and course
+        data.forEach((student, index) => {
+          const rowData = [index + 1, `${student.name.firstName} ${student.name.lastName}`];
+  
+          // Add attendance data for each course
+          student.courses.forEach((course) => {
+            //const columnIndex = 3 + courseIndex * 3;
+            rowData.push(
+              course.presentDays,
+              course.totalDays,
+              course.totalDays === 0 ? 'N/A' : `${Math.round((course.presentDays / course.totalDays) * 100)}`
+            );
+          });
+  
+          // Add row to worksheet
+          const dataRow = worksheet.addRow(rowData);
+          dataRow.alignment = { horizontal: 'center' };
+        });
+  
+        // Auto-fit column widths to content
+        worksheet.columns.forEach((column) => {
+          column.eachCell({ includeEmpty: true }, (cell) => {
+            const desiredWidth = Math.max((cell.value || '').toString().length + 2, 12); // Minimum column width of 12
+            column.width = Math.max(column.width, desiredWidth);
+          });
+        });
+  
+        // Calculate the width of the last column based on the maximum content width
+        const lastColumn = worksheet.getColumn(worksheet.columns.length);
+        const maxContentWidth = lastColumn.width;
+        const extraWidth = 10; // Additional width for padding
+        lastColumn.width = Math.max(maxContentWidth + extraWidth, 20); // Set the minimum width to 20
+  
+        const fileName = 'Batch_Attendance_Report';
+        workbook.xlsx.writeBuffer().then((buffer) => {
+          const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          saveAs(blob, `${fileName}.xlsx`);
+        });
       } else {
         console.error('Error generating batch attendance report');
       }
