@@ -203,9 +203,14 @@ const AttendanceReport = () => {
 
   return (
     <div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Attendance Report
       </Typography>
+      <Button variant="contained" color="primary" onClick={handleGenerateReport}>
+        Generate Batch Attendance Report
+      </Button>
+      </div>
 
       <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
         {courses.map((course) => (
