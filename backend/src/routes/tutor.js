@@ -58,19 +58,24 @@ router.post('/tutor/attendance', async (req, res) => {
   // const isPresent = true;
   try {
     const data = req.body;
-    console.log(data);
+    //console.log(data);
     // data is an array of objects
     for (let i = 0; i < data.length; ++i) {
       const { _id, courseCode, date, hour, isPresent } = data[i];
       console.log(data[i]);
-      const checkDuplicate = await InternalMark.findOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode,'courseAssessmentTheory.attendance.date':date,'courseAssessmentTheory.attendance.hour':hour});
-      if(!checkDuplicate) {
-        const addAttendance = await InternalMark.updateOne({ _id: _id, 'courseAssessmentTheory.courseCode': courseCode }, { $push: { 'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent } } });
-        console.log(addAttendance);
+      //const checkDuplicate = await InternalMark.findOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode,'courseAssessmentTheory.attendance.date':date,'courseAssessmentTheory.attendance.hour':hour});
+      //console.log(checkDuplicate);
+      const exists = await InternalMark.findOne({_id:_id,'courseAssessmentTheory': {$elemMatch:{courseCode:courseCode,'attendance':{$elemMatch:{date:date,hour:hour}}}}});
+      //console.log(exists);
+      if(!exists) {
+        console.log('no Duplicate');
+        const addAttendance = await InternalMark.updateOne({ _id: _id, 'courseAssessmentTheory': {$elemMatch:{courseCode:courseCode} }}, { $addToSet: {'courseAssessmentTheory.$[courseElem].attendance':{$each:[{ date: date, hour: hour, isPresent: isPresent }]}}},{arrayFilters:[{ 'courseElem.courseCode': courseCode }],new: true});
+        //console.log(addAttendance);
       }
       else{
-        const updateAttendance = await InternalMark.updateOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode,'courseAssessmentTheory.attendance.date':date,'courseAssessmentTheory.attendance.hour':hour},{$set:{'courseAssessmentTheory.$[].attendance': { date: date, hour: hour, isPresent: isPresent }}});
-        console.log(updateAttendance);
+        console.log('there is duplicate');
+        const updateAttendance = await InternalMark.findOneAndUpdate({_id:_id,'courseAssessmentTheory': {$elemMatch:{courseCode:courseCode,'attendance':{$elemMatch:{date:date,hour:hour}}}}},{$set:{'courseAssessmentTheory.$[courseElem].attendance.$[attendanceElem].isPresent': isPresent}},{arrayFilters:[{ 'courseElem.courseCode': courseCode },{ 'attendanceElem.date': date, 'attendanceElem.hour': hour }],new:true});
+        //console.log(updateAttendance);
       }
     }
     return res.json({status:'ok'});
