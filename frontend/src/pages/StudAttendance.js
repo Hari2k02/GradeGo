@@ -36,7 +36,7 @@ export default function StudAttendance() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ktuId: hellodata.details.batchDetails._id,
+          _id: hellodata.details.batchDetails._id,
           courseCode: selectedCourse
         })
       });

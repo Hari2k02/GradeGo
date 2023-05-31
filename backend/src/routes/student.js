@@ -10,54 +10,36 @@ router.post('/attendance/student/', async (req, res) => {
   // const courseCode = 'CST302';
   try {
     const { _id, courseCode } = req.body;
-    // find the semester an batch from the _id
-    const semesterAndBatch = await StaffAdvisor.findOne({ _id: _id }, { semesterHandled: 1, batchHandled: 1 });
-    // now find the students with this semester and batch
-    const semester = semesterAndBatch.semesterHandled;
-    const batch = semesterAndBatch.batchHandled;
-    const students = await Students.find({ currentSemester: semester, batch: batch }, { _id: 1 });
-    // console.log(students);
-    let studentsList = [];
-    for (let i = 0; i < students.length; ++i) {
-      const studentId = await StudentCourses.findOne({ _id: students[i]._id, 'coursesEnrolled.semesterCourses.courseCode': courseCode }, { _id: 1 });
-      const studentNameList = await Students.findOne({ _id: studentId }, { _id: 1, name: 1 });
-      if (studentNameList) {
-        studentsList.push(studentNameList);
-      }
-      // if (studentId) {
-      //   studentsList.push(studentId);
-      // }
-    }
-
-
-    let ktuIds = [];
-    for (let i = 0; i < studentsList.length; i++) {
-      ktuIds.push(studentsList[i]._id);
-    }
-
+    let ktuIds = [_id];
     const results = await InternalMarks.aggregate([
       { $unwind: '$courseAssessmentTheory' },
       { $match: { _id: { $in: ktuIds }, 'courseAssessmentTheory.courseCode': courseCode } },
       { $unwind: '$courseAssessmentTheory.attendance' },
       {
-        $match: {
-          'courseAssessmentTheory.attendance.isPresent': true
-        }
-      },
-      {
         $group: {
           _id: '$_id',
-          presentDays: { $addToSet: '$courseAssessmentTheory.attendance.date' },
+          presentDays: {
+            $sum: {
+              $cond: [
+                { $eq: ['$courseAssessmentTheory.attendance.isPresent', true] },
+                1,
+                0
+              ]
+            }
+          },
           totalDays: { $sum: 1 }
         }
       }
     ]).exec();
+
     let output = [];
-    console.log(results);
     // Log the attendance statistics
     for (let i = 0; i < results.length; ++i) {
-      const studentName = await Students.findOne({ _id: results[i]._id }, { name: 1 });
-      output.push({ '_id': results[i]._id, 'name': studentName, 'presentDays': results[i].presentDays.length, 'totalDays': results[i].totalDays });
+      // const studentName = await Students.findOne({ _id: results[i]._id }, { name: 1 });
+      output.push({
+        'presentDays': results[i].presentDays,
+        'totalDays': results[i].totalDays
+      });
     }
     return res.json(output);
   }
