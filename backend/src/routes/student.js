@@ -41,6 +41,9 @@ router.post('/attendance/student/', async (req, res) => {
         'totalDays': results[i].totalDays
       });
     }
+    if (output.length === 0) {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
     return res.json(output);
   }
   catch (error) {
