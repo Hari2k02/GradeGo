@@ -6,6 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 // import { useTheme } from '@mui/material/styles';
 import { Box, Link } from '@mui/material';
 
+
 // ----------------------------------------------------------------------
 
 const Logo = forwardRef(function Logo({ disabledLink = false, sx, ...other }, ref) {
@@ -29,7 +30,7 @@ const Logo = forwardRef(function Logo({ disabledLink = false, sx, ...other }, re
       }}
       {...other}
     >
-      {/* SVG path content */}
+      <img src="/assets/logo.svg" alt="login" />
     </Box>
   );
 
