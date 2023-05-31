@@ -119,3 +119,32 @@ const InternalMarkSchema = new mongoose.Schema({
 });
 
 module.exports = new mongoose.model('InternalMark', InternalMarkSchema);
+/*
+db.internalmarks.update(
+  { _id: "tve20cs003" },
+  {
+    $push: {
+      courseAssessmentTheory: {
+        courseCode: "HUT300",
+        attendance: [
+          {
+            date: ISODate("2023-04-17T00:00:00.000+00:00"),
+            hour: 5,
+            isPresent: true,
+          },
+          {
+            date: ISODate("2023-03-19T00:00:00.000+00:00"),
+            hour: 6,
+            isPresent: true,
+          },
+          {
+            date: ISODate("2023-04-19T00:00:00.000+00:00"),
+            hour: 4,
+            isPresent: true,
+          }
+        ]
+      }
+    }
+  }
+)
+*/

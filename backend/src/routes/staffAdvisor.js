@@ -113,7 +113,7 @@ router.post('/facdashboard/studentAttendance', async (req, res) => {
     const semester = semesterAndBatch.semesterHandled;
     const batch = semesterAndBatch.batchHandled;
     const students = await Students.find({ currentSemester: semester, batch: batch }, { _id: 1 });
-    console.log(students);
+    // console.log(students);
     let studentsList = [];
     for (let i = 0; i < students.length; ++i) {
       const studentId = await StudentCourses.findOne({ _id: students[i]._id, 'coursesEnrolled.semesterCourses.courseCode': courseCode }, { _id: 1 });
@@ -150,6 +150,7 @@ router.post('/facdashboard/studentAttendance', async (req, res) => {
       }
     ]).exec();
     let output = [];
+    console.log(results);
     // Log the attendance statistics
     for (let i = 0; i < results.length; ++i) {
       const studentName = await Students.findOne({ _id: results[i]._id }, { name: 1 });
