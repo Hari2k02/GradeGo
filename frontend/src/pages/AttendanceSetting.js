@@ -39,6 +39,7 @@ const TABLE_HEAD = [
 ];
 
 export default function AttendanceSetting() {
+  const [currentHour, setCurrentHour] = useState(0); // changes for testing purpose only to be removed 
   const [dataSendSuccess, setDataSendSuccess] = useState(false);
   const { facsemdata } = useContext(FacultyDataContext);
   const [selectedOpt, setSelectedOpt] = useState('');
@@ -163,13 +164,14 @@ export default function AttendanceSetting() {
 
   const submitAttendance = async () => {
     let currentDate = new Date().toISOString().slice(0, 10);
-    let currentHour = new Date().getHours();
+    // let currentHour = new Date().getHours();  commented for testing purpose 
 
-    if (currentHour <= 12) {
-      currentHour = currentHour - 8;
-    } else if (currentHour >= 13) {
-      currentHour = currentHour - 9;
-    }
+    // if (currentHour <= 12) {
+    //   currentHour = currentHour - 8;
+    // } else if (currentHour >= 13) {
+    //   currentHour = currentHour - 9;
+    // }
+
 
     const attendanceData = filteredStudents.map((student) => {
       const { _id, status } = student;
@@ -235,7 +237,7 @@ export default function AttendanceSetting() {
           <Typography variant="h4">Attendance Settings</Typography>
         </Stack>
         <Stack direction="row" spacing={2} alignItems="center">
-          <TextField
+          <TextField  
             select
             fullWidth
             label="Select Semester"
@@ -280,7 +282,7 @@ export default function AttendanceSetting() {
                 value={courseCode}
                 onChange={(event) => {
                   setCourseCode(event.target.value);
-                  handleSelectOption(event); 
+                  handleSelectOption(event);
                 }}
                 variant="outlined"
               >
@@ -312,6 +314,14 @@ export default function AttendanceSetting() {
         ) : (
           <Card>
             <Scrollbar>
+              <TextField //to be removed after testing 
+                fullWidth
+                label="Current Hour"
+                type="number"
+                value={currentHour}
+                onChange={(event) => setCurrentHour(event.target.value)}
+                variant="outlined"
+              />
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
                   <TableHead>
