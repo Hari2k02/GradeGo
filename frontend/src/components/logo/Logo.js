@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 // import { useTheme } from '@mui/material/styles';
-import { Box, Link } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
 
 
 // ----------------------------------------------------------------------
@@ -26,11 +26,13 @@ const Logo = forwardRef(function Logo({ disabledLink = false, sx, ...other }, re
         width: 40,
         height: 40,
         display: 'inline-flex',
+        alignItems: "center",
         ...sx,
       }}
       {...other}
     >
-      <img src="/assets/logo.svg" alt="login" />
+      <img src="/assets/gradegoicon.png" alt="login"  />
+        <Typography style={{paddingLeft:"10px"}}>GradeGo</Typography>
     </Box>
   );
 
