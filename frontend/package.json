@@ -1,7 +1,6 @@
 {
-  "name": "@minimal/material-kit-react",
-  "author": "minimals.cc",
-  "licence": "MIT",
+  "name": "GradeGo",
+  "author": "GradeGo",
   "version": "1.7.0",
   "private": false,
   "scripts": {
