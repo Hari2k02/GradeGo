@@ -33,6 +33,8 @@ const AttendanceReport = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState('');
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+
 
   const { hellodata } = useContext(DataContext);
 
@@ -109,7 +111,8 @@ const AttendanceReport = () => {
 
   const handleGenerateBatchExcelReport = async () => {
     try {
-      const response = await fetch('http://localhost:1337/facdashboard/batchAttendanceReport', {
+      setIsGeneratingReport(true);
+      const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/batchAttendanceReport', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,6 +205,8 @@ const AttendanceReport = () => {
       }
     } catch (error) {
       console.error('Error generating batch attendance report:', error);
+    } finally {
+      setIsGeneratingReport(false); // Set loading state to false
     }
   };
 
@@ -310,9 +315,21 @@ const AttendanceReport = () => {
         <Typography variant="h4" component="h1" gutterBottom>
           Attendance Report
         </Typography>
-        <Button variant="contained" color="primary" onClick={handleGenerateBatchExcelReport}>
-          Generate Batch Attendance Report
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleGenerateBatchExcelReport}
+          disabled={isGeneratingReport}
+          style={{ alignSelf: 'center', marginTop: '2rem' }}
+        >
+          {isGeneratingReport ? (
+            <CircularProgress size={24} style={{ marginRight: '0.5rem' }} />
+          ) : (
+            'Generate Batch Attendance Report'
+          )}
         </Button>
+
+
       </div>
 
       <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
@@ -322,6 +339,29 @@ const AttendanceReport = () => {
           </MenuItem>
         ))}
       </Select>
+
+      {isGeneratingReport && (
+  <div
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      zIndex: 9999,
+    }}
+  >
+    <CircularProgress />
+    <div style={{ marginLeft: '2rem' }}>
+      <Typography>Downloading Batch Attendance Report...</Typography>
+    </div>
+  </div>
+)}
+
 
       {isLoading ? (
         <div
