@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Grid, MenuItem, TextField, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Grid, MenuItem, TextField, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Typography } from '@mui/material';
 import { DataContext } from '../DataContext';
 
 import {
@@ -75,9 +75,12 @@ export default function StudAttendance() {
       <Helmet>
         <title>Student Attendance | GradeGo</title>
       </Helmet>
-      <Grid item xs={12} md={6} lg={4}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Typography variant="h4">Attendance</Typography>
+      </Stack>
+      <Grid item xs={12} md={6} lg={4} style={{ marginBottom: '2rem' }}>
         {/* Dropdown to select course */}
-        <FormControl fullWidth>
+        <FormControl fullWidth style={{ marginBottom: '1.75rem' }}>
           <TextField
             id="course-select"
             select
