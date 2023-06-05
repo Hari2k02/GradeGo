@@ -40,58 +40,64 @@ const Timetable = () => {
 
 
     useEffect(() => {
-        console.log(timetableData)
-    }
-        , [timetableData])
-
+        console.log(timetableData);
+    }, [timetableData]);
 
     return (
         <div>
-        <Helmet>
-        <title>Timetable | GradeGo</title>
-        </Helmet>
+            <Helmet>
+                <title>Timetable | GradeGo</title>
+            </Helmet>
             {
-                
-                    <div>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                            <Typography variant="h4">Timetable</Typography>
-                        </Stack>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell style={{ border: '1px solid black' }}>Day</TableCell>
-                                        {timetableData.days.length > 0 &&
-                                            timetableData.days[0].periods.map((period, index) => (
-                                                <TableCell key={index} style={{ border: '1px solid black' }}>Period {period._id}</TableCell>
-                                            ))}
+                <div>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Typography variant="h4">Timetable</Typography>
+                    </Stack>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell style={{ border: '1px solid black' }}>Day</TableCell>
+                                    {timetableData.days.length > 0 &&
+                                        timetableData.days[0].periods.map((period, index) => (
+                                            <TableCell key={index} style={{ border: '1px solid black' }}>Period {period._id}</TableCell>
+                                        ))}
+                                </TableRow>
+                            </TableHead>
+
+                            <TableBody>
+                                {timetableData.days.map((day, i) => (
+                                    <TableRow key={i}>
+                                        <TableCell
+                                            key={day._id}
+                                            style={{
+                                                border: '1px solid black',
+                                                textTransform: 'uppercase',
+                                                fontWeight: 'bold',
+                                                backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white',
+                                            }}
+                                        >
+                                            {day._id}
+                                        </TableCell>
+                                        {day.periods.map((period, index) => (
+                                            <TableCell
+                                                key={index}
+                                                style={{
+                                                    border: '1px solid black',
+                                                    backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white',
+                                                    color: period.courseAbbreviation ? 'black' : 'gray',
+                                                }}
+                                            >
+                                                {period.courseAbbreviation || 'No Class'}
+                                            </TableCell>
+                                        ))}
                                     </TableRow>
-                                </TableHead>
-
-                                <TableBody>
-                                    {
-                                        timetableData.days.map((day, i) => (
-                                            <TableRow key={i}>
-                                                <TableCell key={day._id} style={{ border: '1px solid black' }}>
-                                                    {day._id}
-                                                </TableCell>
-                                                {day.periods.map((period, index) => (
-                                                    <TableCell key={index} style={{ border: '1px solid black' }}>{period.courseAbbreviation}</TableCell>
-                                                ))}
-                                            </TableRow>
-
-                                        ))
-                                    }
-                                </TableBody>
-
-
-                            </Table>
-                        </TableContainer>
-                        
-                    </div>
-                
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </div>
             }
-            
         </div>
     );
 };
