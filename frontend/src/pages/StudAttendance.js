@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Grid,  MenuItem, TextField, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Grid, MenuItem, TextField, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { DataContext } from '../DataContext';
 
 import {
@@ -20,6 +20,13 @@ export default function StudAttendance() {
   const handleCourseChange = (event) => {
     setSelectedCourse(event.target.value);
   };
+
+  useEffect(() => {
+    if (hellodata.details.studentCourses.coursesEnrolled[0]?.semesterCourses[0]?.courseCode) {
+      // Set the first option as the selected course
+      setSelectedCourse(hellodata.details.studentCourses.coursesEnrolled[0].semesterCourses[0].courseCode);
+    }
+  }, [hellodata]);
 
   useEffect(() => {
     if (selectedCourse) {
@@ -46,15 +53,12 @@ export default function StudAttendance() {
         const data = await response.json();
         setAttendanceData(data);
         setLoading(false);
-      }
-
-      else {
+      } else {
         // Handle error response
         console.log('Error:', response.status);
         setAttendanceData({});
         setLoading(false);
         setIsNoDataPopupOpen(true);
-
       }
     } catch (error) {
       // Handle fetch error
@@ -68,12 +72,11 @@ export default function StudAttendance() {
 
   return (
     <>
-    <Helmet>
+      <Helmet>
         <title>Student Attendance | GradeGo</title>
       </Helmet>
       <Grid item xs={12} md={6} lg={4}>
         {/* Dropdown to select course */}
-
         <FormControl fullWidth>
           <TextField
             id="course-select"
@@ -85,7 +88,7 @@ export default function StudAttendance() {
               displayEmpty: true
             }}
           >
-            {hellodata.details.studentCourses.coursesEnrolled[0].semesterCourses.map((course) => (
+            {hellodata.details.studentCourses.coursesEnrolled[0]?.semesterCourses.map((course) => (
               <MenuItem key={course._id} value={course.courseCode}>
                 {course.courseCode}
               </MenuItem>
