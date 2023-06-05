@@ -39,7 +39,7 @@ const TABLE_HEAD = [
 ];
 
 export default function AttendanceSetting() {
-  const [currentHour, setCurrentHour] = useState(0); // changes for testing purpose only to be removed 
+  // const [currentHour, setCurrentHour] = useState(0); // changes for testing purpose only to be removed 
   const [dataSendSuccess, setDataSendSuccess] = useState(false);
   const { facsemdata } = useContext(FacultyDataContext);
   const [selectedOpt, setSelectedOpt] = useState('');
@@ -180,7 +180,7 @@ export default function AttendanceSetting() {
         _id,
         courseCode,
         date: currentDate,
-        hour: currentHour,
+        // hour: currentHour,
         isPresent: status === 'present',
       };
     });
@@ -234,9 +234,9 @@ export default function AttendanceSetting() {
       </Helmet>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4">Attendance Settings</Typography>
+          <Typography variant="h4">Attendance Setting</Typography>
         </Stack>
-        <Stack direction="row" spacing={2} alignItems="center">
+        <Stack direction="row" spacing={2} alignItems="center" mb={3}>
           <TextField  
             select
             fullWidth
@@ -314,14 +314,14 @@ export default function AttendanceSetting() {
         ) : (
           <Card>
             <Scrollbar>
-              <TextField //to be removed after testing 
+              {/* <TextField //to be removed after testing 
                 fullWidth
                 label="Current Hour"
                 type="number"
                 value={currentHour}
                 onChange={(event) => setCurrentHour(event.target.value)}
                 variant="outlined"
-              />
+              /> */}
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
                   <TableHead>
