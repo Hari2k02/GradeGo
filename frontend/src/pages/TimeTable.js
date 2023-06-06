@@ -4,193 +4,217 @@ import { DataContext } from '../DataContext';
 import { Helmet } from 'react-helmet-async';
 
 const Timetable = () => {
-    const { hellodata } = useContext(DataContext);
-    const { details, course } = hellodata;
-    console.log(hellodata);
-    const [timetableData, setTimetableData] = useState({ days: [] });
-    const [availableCourses, setAvailableCourses] = useState([]);
-    useEffect(() => {
-        // Fetch timetable data from backend
-        const fetchData = async () => {
-            try {
-                const response = await fetch("https://gradego-rtib.onrender.com/facdashboard/DisplayTimeTable", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        semester: details.semesterHandled,
-                        batch: details.batchHandled
-                    }),
-                });
+  const { hellodata } = useContext(DataContext);
+  const { details, course } = hellodata;
+  console.log(hellodata);
+  const [timetableData, setTimetableData] = useState({ days: [] });
+  const [availableCourses, setAvailableCourses] = useState([]);
 
-                if (response.ok) {
-                    const timetableDataback = await response.json();
-                    setTimetableData(timetableDataback);
-                } else {
-                    console.error('Failed to retrieve timetable data:', response.status);
-                }
-            } catch (error) {
-                console.error('Error retrieving timetable data:', error);
-            }
-        };
+  useEffect(() => {
+    // Fetch timetable data from backend
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://gradego-rtib.onrender.com/facdashboard/DisplayTimeTable", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            semester: details.semesterHandled,
+            batch: details.batchHandled
+          }),
+        });
 
-        fetchData();
-    }, [details]);
-
-    useEffect(() => {
-        setAvailableCourses(course);
-    }, [course]);
-
-    useEffect(() => {
-        console.log(timetableData)
-    }
-        , [timetableData])
-
-
-    const handleTimetableChange = (dayIndex, periodIndex, courseAbbreviation) => {
-        const updatedTimetable = { ...timetableData };
-        updatedTimetable.days[dayIndex].periods[periodIndex].courseAbbreviation = courseAbbreviation;
-        setTimetableData(updatedTimetable);
-    };
-
-
-    const handleSubmit = async () => {
-        try {
-            const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/TimeTable', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    semester: details.semesterHandled,
-                    batch: details.batchHandled,
-                    days: timetableData.days.map((day) => ({
-                        day: day._id,
-                        periods: day.periods.map((period) => ({
-                            _id: period._id,
-                            courseCode: '',
-                            abbreviation: period.courseAbbreviation,
-                        })),
-                    })),
-                }),
-            });
-
-
-            if (response.ok) {
-
-                console.log('Timetable saved successfully');
-                window.location.reload();
-                // Do something on success
-            } else {
-                console.error('Error saving timetable:', response.status);
-            }
-
-        } catch (error) {
-            console.error('Error saving timetable:', error);
+        if (response.ok) {
+          const timetableDataback = await response.json();
+          setTimetableData(timetableDataback);
+        } else {
+          console.error('Failed to retrieve timetable data:', response.status);
         }
+      } catch (error) {
+        console.error('Error retrieving timetable data:', error);
+      }
     };
 
-    const [viewTimeTableSet, setViewTimeTableSet] = useState(true);
-    const [editTimeTableSet, setEditTimeTableSet] = useState(false);
+    fetchData();
+  }, [details]);
 
-    const handleEdit = () => {
+  useEffect(() => {
+    setAvailableCourses(course);
+  }, [course]);
 
-        setEditTimeTableSet(true);
-        setViewTimeTableSet(false);
+  useEffect(() => {
+    console.log(timetableData)
+  }, [timetableData])
+
+  const handleTimetableChange = (dayIndex, periodIndex, courseAbbreviation) => {
+    const updatedTimetable = { ...timetableData };
+    updatedTimetable.days[dayIndex].periods[periodIndex].courseAbbreviation = courseAbbreviation;
+    setTimetableData(updatedTimetable);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/TimeTable', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          semester: details.semesterHandled,
+          batch: details.batchHandled,
+          days: timetableData.days.map((day) => ({
+            day: day._id,
+            periods: day.periods.map((period) => ({
+              _id: period._id,
+              courseCode: '',
+              abbreviation: period.courseAbbreviation,
+            })),
+          })),
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Timetable saved successfully');
+        window.location.reload();
+        // Do something on success
+      } else {
+        console.error('Error saving timetable:', response.status);
+      }
+    } catch (error) {
+      console.error('Error saving timetable:', error);
     }
-    return (
+  };
+
+  const [viewTimeTableSet, setViewTimeTableSet] = useState(true);
+  const [editTimeTableSet, setEditTimeTableSet] = useState(false);
+
+  const handleEdit = () => {
+    setEditTimeTableSet(true);
+    setViewTimeTableSet(false);
+  };
+
+  return (
+    <div>
+      <Helmet>
+        <title>Timetable | GradeGo</title>
+      </Helmet>
+      {viewTimeTableSet && (
         <div>
-            <Helmet>
-                <title>Timetable | GradeGo</title>
-            </Helmet>
-            {
-                viewTimeTableSet && (
-                    <div>
-                        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                            <Typography variant="h4">Timetable</Typography>
-                        </Stack>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell style={{ border: '1px solid black' }}>Day</TableCell>
-                                        {timetableData.days.length > 0 &&
-                                            timetableData.days[0].periods.map((period, index) => (
-                                                <TableCell key={index} style={{ border: '1px solid black' }}>Period {period._id}</TableCell>
-                                            ))}
-                                    </TableRow>
-                                </TableHead>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+            <Typography variant="h4">Timetable</Typography>
+          </Stack>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ border: '1px solid black' }}>Day</TableCell>
+                  {timetableData.days.length > 0 &&
+                    timetableData.days[0].periods.map((period, index) => (
+                      <TableCell
+                        key={index}
+                        style={{
+                          border: '1px solid black',
+                          textTransform: 'uppercase',
+                          fontWeight: 'bold',
+                        //   backgroundColor: index % 2 === 0 ? '#f5f5f5' : 'white',
+                        }}
+                      >
+                        Period {period._id}
+                      </TableCell>
+                    ))}
+                </TableRow>
+              </TableHead>
 
-                                <TableBody>
-                                    {
-                                        timetableData.days.map((day, i) => (
-                                            <TableRow key={i}>
-                                                <TableCell key={day._id} style={{ border: '1px solid black' }}>
-                                                    {day._id}
-                                                </TableCell>
-                                                {day.periods.map((period, index) => (
-                                                    <TableCell key={index} style={{ border: '1px solid black' }}>{period.courseAbbreviation}</TableCell>
-                                                ))}
-                                            </TableRow>
-
-                                        ))
-                                    }
-                                </TableBody>
-
-
-                            </Table>
-                        </TableContainer>
-                        <Button style={{ padding: '10px', marginTop: '10px' }} variant="contained" onClick={handleEdit}>
-                            Edit
-                        </Button>
-                    </div>
-                )
-            }
-            {editTimeTableSet && (
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell >Day</TableCell>
-                                {timetableData.days.length > 0 &&
-                                    timetableData.days[0].periods.map((period, index) => (
-                                        <TableCell key={index}>Period {period._id}</TableCell>
-                                    ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {timetableData.days.map((day, dayIndex) => (
-                                <TableRow key={day._id}>
-                                    <TableCell>{day._id}</TableCell>
-                                    {day.periods.map((period, periodIndex) => (
-                                        <TableCell key={periodIndex}>
-                                            <Select
-                                                value={period.courseAbbreviation}
-                                                onChange={(e) =>
-                                                    handleTimetableChange(dayIndex, periodIndex, e.target.value)
-                                                }
-                                            >
-                                                <MenuItem value="">Select Course</MenuItem>
-                                                {availableCourses.map((course) => (
-                                                    <MenuItem key={course._id} value={course.courseAbbreviation}>
-                                                        {course.courseAbbreviation}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    <Button style={{ padding: '10px', marginTop: '10px' }} variant="contained" onClick={handleSubmit}>
-                        Submit
-                    </Button>
-                </TableContainer>)
-            }
+              <TableBody>
+                {timetableData.days.map((day, i) => (
+                  <TableRow
+                    key={i}
+                    style={{
+                      border: '1px solid black',
+                      backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white',
+                    }}
+                  >
+                    <TableCell
+                      key={day._id}
+                      style={{
+                        border: '1px solid black',
+                        textTransform: 'uppercase',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {day._id}
+                    </TableCell>
+                    {day.periods.map((period, index) => (
+                      <TableCell
+                        key={index}
+                        style={{
+                          border: '1px solid black',
+                          backgroundColor: i % 2 === 0 ? '#f5f5f5' : 'white',
+                          color: period.courseAbbreviation ? 'black' : 'gray',
+                        }}
+                      >
+                        {period.courseAbbreviation || 'No Class'}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Button style={{ padding: '10px', marginTop: '10px' }} variant="contained" onClick={handleEdit}>
+            Edit
+          </Button>
         </div>
-    );
+      )}
+      {editTimeTableSet && (
+  <TableContainer>
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Day</TableCell>
+          {timetableData.days.length > 0 &&
+            timetableData.days[0].periods.map((period, index) => (
+              <TableCell key={index}>Period {period._id}</TableCell>
+            ))}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {timetableData.days.map((day, dayIndex) => (
+          <TableRow key={day._id}>
+            <TableCell>
+              <Typography style={{ textTransform: 'uppercase' }}>
+                {day._id}
+              </Typography>
+            </TableCell>
+            {day.periods.map((period, periodIndex) => (
+              <TableCell key={periodIndex}>
+                <Select
+                  value={period.courseAbbreviation}
+                  onChange={(e) =>
+                    handleTimetableChange(dayIndex, periodIndex, e.target.value)
+                  }
+                >
+                  <MenuItem value="">Select Course</MenuItem>
+                  {availableCourses.map((course) => (
+                    <MenuItem key={course._id} value={course.courseAbbreviation}>
+                      {course.courseAbbreviation}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+    <Button style={{ padding: '10px', marginTop: '10px' }} variant="contained" onClick={handleSubmit}>
+      Submit
+    </Button>
+  </TableContainer>
+)}
+    </div>
+  );
 };
 
 export default Timetable;
