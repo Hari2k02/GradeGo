@@ -14,11 +14,6 @@ const navConfig = [
     path: '/admindashboard/courses',
     icon: icon('ic_user'),
   },
-  // {
-  //   title: 'Timetable',
-  //   path: '/admindashboard/timetable',
-  //   icon: icon('ic_blog'),
-  // },
   {
     title: 'Logout',
     path: '/login',

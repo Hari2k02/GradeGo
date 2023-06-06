@@ -22,7 +22,7 @@ import { Helmet } from 'react-helmet-async';
 
 const AdminCourses = () => {
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
-  const [selectedSemester, setSelectedSemester] = useState('');
+  const [selectedSemester, setSelectedSemester] = useState(semesters[0]);
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedBatch, setSelectedBatch] = useState('');
