@@ -1,5 +1,11 @@
+/**
+ * @file DashboardAppPage.js
+ * @description This file contains the implementation of the DashboardAppPage component.
+ * It fetches data from an API, renders various sections of the dashboard, and displays the dashboard page.
+ */
+
 import { Helmet } from 'react-helmet-async';
-import React, { useEffect,useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 import { FacultyDataContext } from '../FacultyDataContext';
@@ -11,25 +17,29 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
-
+/**
+ * DashboardAppPage component.
+ * Renders the dashboard page.
+ */
 export default function DashboardAppPage() {
   const { facsemdata, setFacSemData } = useContext(FacultyDataContext);
   const { hellodata } = useContext(DataContext);
   const theme = useTheme();
-  useEffect(() => {
-    const fetchData = async () => {
 
+  useEffect(() => {
+    /**
+     * Fetches data from the API.
+     */
+    const fetchData = async () => {
       try {
         const response = await fetch('https://gradego-rtib.onrender.com/tutor/data', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(
-            {
-              _id: hellodata.details._id
-            }
-          ),
+          body: JSON.stringify({
+            _id: hellodata.details._id,
+          }),
         });
 
         if (!response.ok) {
@@ -38,7 +48,6 @@ export default function DashboardAppPage() {
 
         const data = await response.json();
         setFacSemData(data);
-        
       } catch (error) {
         console.error(error);
       }
@@ -49,15 +58,12 @@ export default function DashboardAppPage() {
 
   useEffect(() => {
     console.log(facsemdata);
-  
-  }, [facsemdata])
-  
-
+  }, [facsemdata]);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard | GradeGo </title>
+        <title>Dashboard | GradeGo</title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -66,23 +72,8 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          {/* <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid> */}
-
           <Grid item xs={12} md={6} lg={8}>
+            {/* Renders the AppWebsiteVisits component */}
             <AppWebsiteVisits
               title="Performance"
               subheader="(+43%) than last year"
@@ -123,6 +114,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
+            {/* Renders the AppCurrentVisits component */}
             <AppCurrentVisits
               title="Marks Percentage"
               chartData={[
@@ -141,6 +133,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
+            {/* Renders the AppConversionRates component */}
             <AppConversionRates
               title="Conversion Rates"
               subheader="(+43%) than last year"
@@ -160,6 +153,7 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
+            {/* Renders the AppCurrentSubject component */}
             <AppCurrentSubject
               title="Current Subject"
               chartLabels={['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math']}

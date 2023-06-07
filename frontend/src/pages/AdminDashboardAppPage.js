@@ -1,3 +1,9 @@
+/*
+  AdminDashboard.js
+
+  This file contains the implementation of the Admin Dashboard page of the GradeGo application.
+*/
+
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '@mui/material/styles';
@@ -9,13 +15,17 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
+/**
+ * DashboardAppPage component renders the Admin Dashboard page.
+ */
 export default function DashboardAppPage() {
   const theme = useTheme();
 
   return (
     <>
+      {/* Helmet component to set the page title */}
       <Helmet>
-        <title> Dashboard | GradeGo </title>
+        <title>Dashboard | GradeGo</title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -24,7 +34,8 @@ export default function DashboardAppPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          {/* <Grid item xs={12} sm={6} md={3}>
+          {/* AppWidgetSummary components (commented out for now)
+          <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
           </Grid>
 
@@ -38,8 +49,10 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid> */}
+          </Grid>
+          */}
 
+          {/* AppWebsiteVisits component */}
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Website Visits"
@@ -80,6 +93,7 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
+          {/* AppCurrentVisits component */}
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Current Visits"
@@ -98,6 +112,7 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
+          {/* AppConversionRates component */}
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
               title="Conversion Rates"
@@ -117,6 +132,7 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
+          {/* AppCurrentSubject component */}
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
