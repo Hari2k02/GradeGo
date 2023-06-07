@@ -1,3 +1,7 @@
+/**
+ * This file defines the routes for tutor functionality.
+ */
+
 var express = require('express');
 var router = express.Router();
 const InternalMark = require(__dirname+'/../models/InternalMark');
@@ -5,16 +9,18 @@ const FacultyCourses = require(__dirname+'/../models/FacultyCourses');
 const StudentCourses = require(__dirname+'/../models/StudentCourses');
 const Students = require(__dirname+'/../models/Student');
 
-// return all students of the given semester, course and 
+/**
+ * POST /tutor/attendancedata
+ * Retrieves the list of students in a given semester, batch, and course.
+ * @param {Number} semester - Semester number
+ * @param {Number} batch - Batch number
+ * @param {String} courseCode - Course code
+ * @returns {Array} - Array of student details
+ */
 router.post('/tutor/attendancedata', async (req, res) => {
   try {
     const { semester, batch, courseCode } = req.body;
-    // const semester = 6;
-    // const batch = 1;
-    // const courseCode = 'CST302';
-    //returns the list of student id's in the given semester and batch
     const students = await Students.find({ currentSemester: semester, batch: batch }, { _id: 1 });
-    console.log(students);
     let studentsList = [];
     for (let i = 0; i < students.length; ++i) {
       const studentId = await StudentCourses.findOne({ _id: students[i]._id, 'coursesEnrolled.semesterCourses.courseCode': courseCode }, { _id: 1 });
@@ -22,11 +28,7 @@ router.post('/tutor/attendancedata', async (req, res) => {
       if (studentNameList) {
         studentsList.push(studentNameList);
       }
-      // if (studentId) {
-      //   studentsList.push(studentId);
-      // }
     }
-    console.log(studentsList);
     return res.json(studentsList);
   }
   catch (error) {
@@ -35,13 +37,16 @@ router.post('/tutor/attendancedata', async (req, res) => {
   }
 });
 
-// returns the faculty course and semester details
+/**
+ * POST /tutor/data
+ * Retrieves the course and semester details for a faculty.
+ * @param {String} _id - Faculty ID
+ * @returns {Object} - Faculty course and semester details
+ */
 router.post('/tutor/data', async (req, res) => {
   try {
     const { _id } = req.body;
-    // const _id = 'ktu-f375';
     const facultyDetails = await FacultyCourses.findOne({ _id: _id });
-    console.log({ facultyDetails });
     return res.json({ facultyDetails });
   }
   catch (error) {
@@ -50,32 +55,23 @@ router.post('/tutor/data', async (req, res) => {
   }
 });
 
+/**
+ * POST /tutor/attendance
+ * Updates the attendance records for students in a course.
+ * @param {Array} data - Array of attendance data objects
+ * @returns {Object} - Success status
+ */
 router.post('/tutor/attendance', async (req, res) => {
-  // const _id = 'tve20cs000';
-  // const courseCode = 'CST302';
-  // const date = '2023-05-17';
-  // const hour = 3;
-  // const isPresent = true;
   try {
     const data = req.body;
-    //console.log(data);
-    // data is an array of objects
     for (let i = 0; i < data.length; ++i) {
       const { _id, courseCode, date, hour, isPresent } = data[i];
-      console.log(data[i]);
-      //const checkDuplicate = await InternalMark.findOne({_id:_id,'courseAssessmentTheory.courseCode': courseCode,'courseAssessmentTheory.attendance.date':date,'courseAssessmentTheory.attendance.hour':hour});
-      //console.log(checkDuplicate);
       const exists = await InternalMark.findOne({_id:_id,'courseAssessmentTheory': {$elemMatch:{courseCode:courseCode,'attendance':{$elemMatch:{date:date,hour:hour}}}}});
-      //console.log(exists);
       if(!exists) {
-        console.log('no Duplicate');
         const addAttendance = await InternalMark.updateOne({ _id: _id, 'courseAssessmentTheory': {$elemMatch:{courseCode:courseCode} }}, { $addToSet: {'courseAssessmentTheory.$[courseElem].attendance':{$each:[{ date: date, hour: hour, isPresent: isPresent }]}}},{arrayFilters:[{ 'courseElem.courseCode': courseCode }],new: true});
-        //console.log(addAttendance);
       }
       else{
-        console.log('there is duplicate');
         const updateAttendance = await InternalMark.findOneAndUpdate({_id:_id,'courseAssessmentTheory': {$elemMatch:{courseCode:courseCode,'attendance':{$elemMatch:{date:date,hour:hour}}}}},{$set:{'courseAssessmentTheory.$[courseElem].attendance.$[attendanceElem].isPresent': isPresent}},{arrayFilters:[{ 'courseElem.courseCode': courseCode },{ 'attendanceElem.date': date, 'attendanceElem.hour': hour }],new:true});
-        //console.log(updateAttendance);
       }
     }
     return res.json({status:'ok'});
@@ -89,7 +85,70 @@ router.post('/tutor/attendance', async (req, res) => {
 module.exports = router;
 
 /*----------------------------------------------------------------
-
- {_id: 'tve20cs000', "courseAssessmentTheory.courseCode": 'CST302'}, { $push: { courseAssessmentTheory: { attendance: { date: '2023-05-17', hour: 2, ispresent: true } } } 
-
-*/
+ 
+ This file contains the routes for tutor functionality. It handles various operations related to tutors, such as retrieving student attendance data, faculty course and semester details, and updating student attendance records.
+ 
+ API Endpoints:
+ 
+ 1. POST /tutor/attendancedata
+    Retrieves the list of students in a given semester, batch, and course.
+    Request body:
+    {
+      "semester": 2,
+      "batch": 2021,
+      "courseCode": "CST101"
+    }
+    Response:
+    [
+      {
+        "_id": "student1",
+        "name": "John Doe"
+      },
+      {
+        "_id": "student2",
+        "name": "Jane Smith"
+      },
+      ...
+    ]
+    
+ 2. POST /tutor/data
+    Retrieves the course and semester details for a faculty.
+    Request body:
+    {
+      "_id": "faculty1"
+    }
+    Response:
+    {
+      "facultyDetails": {
+        "_id": "faculty1",
+        "course": "CST101",
+        "semester": 2
+      }
+    }
+    
+ 3. POST /tutor/attendance
+    Updates the attendance records for students in a course.
+    Request body:
+    [
+      {
+        "_id": "student1",
+        "courseCode": "CST101",
+        "date": "2023-06-01",
+        "hour": 1,
+        "isPresent": true
+      },
+      {
+        "_id": "student2",
+        "courseCode": "CST101",
+        "date": "2023-06-01",
+        "hour": 1,
+        "isPresent": false
+      },
+      ...
+    ]
+    Response:
+    {
+      "status": "ok"
+    }
+ 
+-----------------------------------------------------------------*/

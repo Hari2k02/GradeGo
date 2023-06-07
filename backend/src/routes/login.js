@@ -1,3 +1,28 @@
+/*
+  This file contains the login routes for the application.
+*/
+
+/*
+DOCUMENTATION:
+
+This file contains the login routes for the application.
+
+Route: POST /login
+Description: Authenticates user login credentials and generates access and refresh tokens.
+
+Route: GET /facdashboard
+Description: Retrieves faculty dashboard details for the authenticated user.
+Middleware: authenticateToken - verifies the access token of the user.
+
+Route: POST /tokens
+Description: Generates a new access token using a refresh token.
+
+Route: DELETE /logout
+Description: Removes a refresh token from the array of stored refresh tokens.
+
+*/
+
+// Required modules and dependencies
 var express = require('express');
 require('dotenv').config();
 var router = express.Router();
@@ -8,67 +33,70 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const StaffAdvisor = require(__dirname + '/../models/StaffAdvisor');
 const StudentCourses = require(__dirname + '/../models/StudentCourses');
-// const CodeToName = require('../models/CodeToName');
 const { authenticateToken, generateAccessToken } = require(__dirname + '/../middlewares/auth');
 const Courses = require(__dirname + '/../models/Courses');
 
+// Array to store refresh tokens
 let refreshTokens = [];
 
+/*
+  Route: POST /login
+  Description: Authenticates user login credentials and generates access and refresh tokens.
+*/
 router.post('/login', async (req, res) => {
   console.log(req.body);
-  // check in db if he is a valid user if he is then redirect to dashboard
   try {
+    // Extract login credentials from request body
     const { ktuId, password } = req.body;
-    console.log(ktuId, password);
-    //jwt implementation
+
+    // Generate access and refresh tokens
     const user = { name: ktuId };
-    //const accessToken = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{expiresIn:'20s'});
     const accessToken = generateAccessToken(user);
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
     refreshTokens.push(refreshToken);
 
+    // Find the user in the database
     const pass = await Login.findOne({ _id: ktuId }, { password: 1 });
-    console.log(pass);
+
     if (pass) {
+      // Compare the provided password with the stored password
       const passwordMatches = bcrypt.compareSync(password, pass.password);
-      console.log(passwordMatches);
 
       if (passwordMatches) {
-        console.log('valid user');
-        //check whether the person is a teacher or a student
-        // check whether the person is in the student table
-        const isStudent = await Student.findOne({ _id: ktuId });
-        // console.log(isStudent);
+        // If the password is valid, determine user type (student or faculty)
         if (ktuId === 'admin') {
           return res.json({ status: 'ok', user: 'admin', accessToken: accessToken, refreshToken: refreshToken });
-        }
-        if (isStudent) {
-          const studentCourses = await StudentCourses.findOne({ _id: ktuId });
-          const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1 });
-          const nameDetails = await Student.findOne({ _id: ktuId }, { name: 1, email: 1 });
-          return res.json({ status: 'ok', user: 'student', name: nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
         } else {
-          const isFaculty = await Faculty.findOne({ _id: ktuId });
+          // Check if the user is a student
+          const isStudent = await Student.findOne({ _id: ktuId });
 
-          const isStaffAdvisor = await Faculty.findOne(
-            { _id: ktuId, 'roles.roleName': 'Staff Advisor' }, { _id: 1 });
-          const nameDetail = await Faculty.findOne({ _id: ktuId }, { name: 1, email: 1 });
-          if (isFaculty) {
-            if (isStaffAdvisor) {
-              console.log('hello world guys');
-              const staffDetails = await StaffAdvisor.findOne({ _id: ktuId });
-              //console.log(staffDetails);
-              // const courseDetails = await CodeToName.findOne({_id:staffDetails.semesterHandled});
-              const courseDetails = await Courses.find({ semester: staffDetails.semesterHandled });
-              //console.log(courseDetails);
-              return res.json({ status: 'ok', user: 'faculty', name: nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
+          if (isStudent) {
+            // If the user is a student, fetch student details
+            const studentCourses = await StudentCourses.findOne({ _id: ktuId });
+            const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1 });
+            const nameDetails = await Student.findOne({ _id: ktuId }, { name: 1, email: 1 });
+
+            return res.json({ status: 'ok', user: 'student', name: nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
+          } else {
+            // If the user is not a student, check if they are a faculty member
+            const isFaculty = await Faculty.findOne({ _id: ktuId });
+            const isStaffAdvisor = await Faculty.findOne(
+              { _id: ktuId, 'roles.roleName': 'Staff Advisor' }, { _id: 1 });
+            const nameDetail = await Faculty.findOne({ _id: ktuId }, { name: 1, email: 1 });
+
+            if (isFaculty) {
+              // If the user is a faculty member, check if they are a staff advisor
+              if (isStaffAdvisor) {
+                const staffDetails = await StaffAdvisor.findOne({ _id: ktuId });
+                const courseDetails = await Courses.find({ semester: staffDetails.semesterHandled });
+
+                return res.json({ status: 'ok', user: 'faculty', name: nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
+              } else {
+                return res.json({ status: 'ok', user: 'faculty', name: nameDetail, accessToken: accessToken, refreshToken: refreshToken });
+              }
+            } else {
+              console.log('error');
             }
-            else {
-              return res.json({ status: 'ok', user: 'faculty', name: nameDetail, accessToken: accessToken, refreshToken: refreshToken });
-            }
-          }
-          else {
-            console.log('error');
           }
         }
       } else {
@@ -79,59 +107,73 @@ router.post('/login', async (req, res) => {
       console.log('invalid username');
       return res.json({ status: 'error', user: 'invalid' });
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+/*
+  Route: GET /facdashboard
+  Description: Retrieves faculty dashboard details for the authenticated user.
+  Middleware: authenticateToken - verifies the access token of the user.
+*/
 router.get('/facdashboard', authenticateToken, async (req, res) => {
   try {
+    // Retrieve login details for the authenticated user
     const logins = await Login.find();
     console.log(logins);
+
     res.json(logins.filter(login => login._id === req.user.name));
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+/*
+  Route: POST /tokens
+  Description: Generates a new access token using a refresh token.
+*/
 router.post('/tokens', (req, res) => {
   try {
     const refreshToken = req.body.token;
+
     if (refreshToken === null) {
       return res.sendStatus(401);
     }
+
     if (!refreshTokens.includes(refreshToken)) {
       return res.sendStatus(403);
     }
+
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
       if (err) {
         return res.sendStatus(403);
       }
+
       const accessToken = generateAccessToken({ name: user.name });
       return res.json({ status: 'ok', accessToken: accessToken });
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-
+/*
+  Route: DELETE /logout
+  Description: Removes a refresh token from the array of stored refresh tokens.
+*/
 router.delete('/logout', (req, res) => {
   try {
     refreshTokens = refreshTokens.filter(token => token !== req.body.token);
     res.sendStatus(204);
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-
+// Export the router
 module.exports = router;
