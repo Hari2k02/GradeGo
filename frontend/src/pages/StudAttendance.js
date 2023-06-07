@@ -1,14 +1,33 @@
+/*
+  File: StudAttendance.js
+  Description: This file contains the component for displaying student attendance.
+*/
+
 import React, { useState, useEffect, useContext } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Grid, MenuItem, TextField, FormControl, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, Typography } from '@mui/material';
-import { DataContext } from '../DataContext';
-
 import {
-  AppCurrentVisits,
-} from '../sections/@dashboard/app';
+  Grid,
+  MenuItem,
+  TextField,
+  FormControl,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { DataContext } from '../DataContext';
+import { AppCurrentVisits } from '../sections/@dashboard/app';
 import { Helmet } from 'react-helmet-async';
 
+/**
+ * Component for displaying student attendance.
+ */
 export default function StudAttendance() {
+  // State variables
   const [loading, setLoading] = useState(false);
   const { hellodata } = useContext(DataContext);
   const theme = useTheme();
@@ -21,20 +40,21 @@ export default function StudAttendance() {
     setSelectedCourse(event.target.value);
   };
 
+  // Set the initial selected course
   useEffect(() => {
     if (hellodata.details.studentCourses.coursesEnrolled[0]?.semesterCourses[0]?.courseCode) {
-      // Set the first option as the selected course
       setSelectedCourse(hellodata.details.studentCourses.coursesEnrolled[0].semesterCourses[0].courseCode);
     }
   }, [hellodata]);
 
+  // Fetch attendance data when the selected course changes
   useEffect(() => {
     if (selectedCourse) {
-      // Fetch attendance data
       fetchAttendanceData();
     }
   }, [selectedCourse, hellodata]);
 
+  // Fetch attendance data from the server
   const fetchAttendanceData = async () => {
     setLoading(true);
     try {
@@ -45,8 +65,8 @@ export default function StudAttendance() {
         },
         body: JSON.stringify({
           _id: hellodata.details.batchDetails._id,
-          courseCode: selectedCourse
-        })
+          courseCode: selectedCourse,
+        }),
       });
 
       if (response.ok) {
@@ -66,18 +86,24 @@ export default function StudAttendance() {
     }
   };
 
+  // Close the no data popup
   const handleNoDataPopupClose = () => {
     setIsNoDataPopupOpen(false);
   };
 
   return (
     <>
+      {/* Document Title */}
       <Helmet>
         <title>Student Attendance | GradeGo</title>
       </Helmet>
+
+      {/* Attendance Heading */}
       <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                        <Typography variant="h4">Attendance</Typography>
+        <Typography variant="h4">Attendance</Typography>
       </Stack>
+
+      {/* Course Selection */}
       <Grid item xs={12} md={6} lg={4} style={{ marginBottom: '2rem' }}>
         {/* Dropdown to select course */}
         <FormControl fullWidth style={{ marginBottom: '1.75rem' }}>
@@ -88,7 +114,7 @@ export default function StudAttendance() {
             value={selectedCourse}
             onChange={handleCourseChange}
             SelectProps={{
-              displayEmpty: true
+              displayEmpty: true,
             }}
           >
             {hellodata.details.studentCourses.coursesEnrolled[0]?.semesterCourses.map((course) => (
@@ -99,30 +125,34 @@ export default function StudAttendance() {
           </TextField>
         </FormControl>
 
+        {/* Loading Indicator */}
         {loading ? (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '300px', // Set a minimum height for the container
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '300px', // Set a minimum height for the container
+            }}
+          >
             <CircularProgress />
           </div>
         ) : (
+          /* Attendance Chart */
           <AppCurrentVisits
             title="Students Attendance"
             chartData={[
               { label: 'Present', value: attendanceData[0]?.presentDays || 0 },
-              { label: 'Absent', value: attendanceData[0]?.totalDays ? attendanceData[0].totalDays - attendanceData[0].presentDays : 0 },
+              {
+                label: 'Absent',
+                value: attendanceData[0]?.totalDays ? attendanceData[0].totalDays - attendanceData[0].presentDays : 0,
+              },
             ]}
-            chartColors={[
-              theme.palette.success.main,
-              theme.palette.error.main,
-            ]}
+            chartColors={[theme.palette.success.main, theme.palette.error.main]}
           />
         )}
 
-        {/* No data popup */}
+        {/* No Data Popup */}
         <Dialog open={isNoDataPopupOpen} onClose={handleNoDataPopupClose}>
           <DialogTitle>No Data Available</DialogTitle>
           <DialogContent>

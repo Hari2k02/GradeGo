@@ -1,3 +1,8 @@
+/*
+  Component: StudDashboardAppPage
+  Description: This component represents the dashboard page for the student app.
+*/
+
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '@mui/material/styles';
@@ -14,8 +19,9 @@ export default function StudDashboardAppPage() {
 
   return (
     <>
+      {/* Set the document title */}
       <Helmet>
-        <title> Dashboard | GradeGo </title>
+        <title>Dashboard | GradeGo</title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -40,6 +46,7 @@ export default function StudDashboardAppPage() {
             <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
           </Grid> */}
 
+          {/* AppWebsiteVisits section */}
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Performance"
@@ -80,6 +87,7 @@ export default function StudDashboardAppPage() {
             />
           </Grid>
 
+          {/* AppCurrentVisits section */}
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
               title="Marks Percentage"
@@ -98,6 +106,7 @@ export default function StudDashboardAppPage() {
             />
           </Grid>
 
+          {/* AppConversionRates section */}
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
               title="Conversion Rates"
@@ -117,6 +126,7 @@ export default function StudDashboardAppPage() {
             />
           </Grid>
 
+          {/* AppCurrentSubject section */}
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
