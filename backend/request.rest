@@ -22,8 +22,8 @@ POST http://localhost:1337/login
 content-Type : application/json
  
  {
-   "ktuId": "tve20cs000",
-   "password": "0000"
+   "ktuId": "tve20cs001",
+   "password": "0001"
  }
 
 ###

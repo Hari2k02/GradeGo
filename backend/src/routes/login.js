@@ -29,6 +29,7 @@ var router = express.Router();
 const Login = require(__dirname + '/../models/Login');
 const Student = require(__dirname + '/../models/Student');
 const Faculty = require(__dirname + '/../models/Faculty');
+const InternalMark = require(__dirname + '/../models/InternalMark');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const StaffAdvisor = require(__dirname + '/../models/StaffAdvisor');
@@ -75,8 +76,39 @@ router.post('/login', async (req, res) => {
             const studentCourses = await StudentCourses.findOne({ _id: ktuId });
             const batchDetails = await Student.findOne({ _id: ktuId }, { batch: 1 });
             const nameDetails = await Student.findOne({ _id: ktuId }, { name: 1, email: 1 });
+            //let att = [];
+            //attendance percentage on login
 
-            return res.json({ status: 'ok', user: 'student', name: nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken });
+            // Find the document with the given _id
+            const course = await InternalMark.findById(ktuId);
+
+            if (!course) {
+              return res.status(404).json({ error: 'Course not found' });
+            }
+
+            // Perform the aggregation to calculate attendance percentage
+            const attendancePer = await InternalMark.aggregate([
+              { $match: { '_id': ktuId } },
+              { $unwind: '$courseAssessmentTheory' },
+              { $unwind: '$courseAssessmentTheory.attendance' },
+              {
+                $group: {
+                  _id: '$courseAssessmentTheory.courseCode',
+                  total: { $sum: 1 },
+                  present: { $sum: { $cond: [{ $eq: ['$courseAssessmentTheory.attendance.isPresent', true] }, 1, 0] } }
+                }
+              },
+              {
+                $project: {
+                  //courseCode: '$_id',
+                  attendancePercentage: { $multiply: [{ $divide: ['$present', '$total'] }, 100] }
+                }
+              }
+            ]);
+
+
+
+            return res.json({ status: 'ok', user: 'student', name: nameDetails, details: { studentCourses, batchDetails }, accessToken: accessToken, refreshToken: refreshToken,attendancePer:attendancePer });
           } else {
             // If the user is not a student, check if they are a faculty member
             const isFaculty = await Faculty.findOne({ _id: ktuId });
