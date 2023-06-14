@@ -122,9 +122,9 @@ router.post('/login', async (req, res) => {
                 const staffDetails = await StaffAdvisor.findOne({ _id: ktuId });
                 const courseDetails = await Courses.find({ semester: staffDetails.semesterHandled });
 
-                return res.json({ status: 'ok', user: 'faculty', name: nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
+                return res.json({ status: 'ok', user: 'faculty',isAdvisor:'yes', name: nameDetail, details: staffDetails, course: courseDetails, accessToken: accessToken, refreshToken: refreshToken });
               } else {
-                return res.json({ status: 'ok', user: 'faculty', name: nameDetail, accessToken: accessToken, refreshToken: refreshToken });
+                return res.json({ status: 'ok', user: 'faculty',isAdvisor:'no', name: nameDetail, accessToken: accessToken, refreshToken: refreshToken });
               }
             } else {
               console.log('error');
