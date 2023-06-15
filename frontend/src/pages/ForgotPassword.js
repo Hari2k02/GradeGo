@@ -8,10 +8,37 @@ const ForgotPasswordPage = () => {
     setEmail(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+
     // Add your password reset logic here, e.g., send a reset link to the provided email
-    console.log(`Sending password reset link to ${email}`);
+
+    // Mock API call to simulate sending the email
+    try {
+      const response = await fetch('http://localhost:1337/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Password reset link sent successfully');
+        // Display a success message to the user
+        alert('Password reset link sent successfully');
+      } else {
+        console.log('Failed to send password reset link');
+        // Display an error message to the user
+        alert('Failed to send password reset link');
+      }
+    } catch (error) {
+      console.log('Error occurred while sending password reset link:', error);
+      // Display an error message to the user
+      alert('An error occurred while sending password reset link');
+    }
   };
 
   return (
@@ -33,12 +60,7 @@ const ForgotPasswordPage = () => {
           margin="normal"
           required
         />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-        >
+        <Button type="submit" variant="contained" color="primary" fullWidth>
           Reset Password
         </Button>
       </form>
