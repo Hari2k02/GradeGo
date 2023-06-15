@@ -18,21 +18,18 @@ import AdminDashboardLayout from './layouts/admindashboard';
 import AdminCourses from './pages/AdminCourses';
 import Home from './pages/home';
 import Contact from './pages/contact';
-
-// ----------------------------------------------------------------------
+import ForgotPassword from './pages/ForgotPassword'; // Import the ForgotPassword component
 
 export default function Router() {
   const { hellodata } = useContext(DataContext);
 
-  const isAuthenticated = hellodata.accessToken !== "";
+  const isAuthenticated = hellodata.accessToken !== '';
 
   const routes = useRoutes([
     {
       path: '/',
       element: <Home />,
-      children: [
-        {element: <Navigate to="/" replace/>, index: true },
-      ], 
+      children: [{ element: <Navigate to="/" replace />, index: true }],
     },
     {
       path: '/dashboard',
@@ -66,11 +63,15 @@ export default function Router() {
       ],
     },
     {
-      path: 'login',
+      path: '/login',
       element: <LoginPage />,
     },
     {
-      path: 'contact',
+      path: '/forgot-password', // New route for ForgotPassword page
+      element: <ForgotPassword />,
+    },
+    {
+      path: '/contact',
       element: <Contact />,
     },
     {
