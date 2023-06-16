@@ -3,11 +3,13 @@ import { DataContext } from './DataContext';
 import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import StudDashboardLayout from './layouts/studdashboard';
+import TutorDashboardLayout from './layouts/tutordashboard';
 import SimpleLayout from './layouts/simple';
 import AttendanceSetting from './pages/AttendanceSetting';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/DashboardAppPage';
+import TutorDashboardAppPage from './pages/TutorDashboardAppPage';
 import TimeTable from './pages/TimeTable';
 import StudDashboardAppPage from './pages/StudDashboardAppPage';
 import StudAttendance from './pages/StudAttendance';
@@ -42,6 +44,17 @@ export default function Router() {
         { path: 'attendance-setting', element: <AttendanceSetting /> },
         { path: 'timetable', element: <TimeTable /> },
         { path: 'student-registration',element: <FacultyStudRegistration />},
+      ],
+    },
+    {
+      path: '/tutordashboard',
+      element: isAuthenticated ? <TutorDashboardLayout /> : <Navigate to="/login" replace />,
+      children: [
+        { element: <Navigate to="/tutordashboard/app" replace />, index: true },
+        { path: 'app', element: <TutorDashboardAppPage /> },
+        { path: 'attendance-report', element: <AttendanceReport /> },
+        { path: 'attendance-setting', element: <AttendanceSetting /> },
+        { path: 'timetable', element: <TimeTable /> },
       ],
     },
     {

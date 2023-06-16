@@ -36,7 +36,12 @@ export default function LoginForm() {
       if (data.user === 'student') {
         navigate('/studdashboard', { replace: true });
       } else if (data.user === 'faculty') {
-        navigate('/dashboard', { replace: true });
+        if(data.isAdvisor === 'yes')  {
+          navigate('/dashboard', { replace: true });
+        }
+        else {
+          navigate('/tutordashboard', { replace: true });
+        }
       } else if (data.user === 'admin') {
         navigate('/admindashboard', { replace: true });
       }
