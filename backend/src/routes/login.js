@@ -25,6 +25,7 @@ Description: Removes a refresh token from the array of stored refresh tokens.
 // Required modules and dependencies
 var express = require('express');
 require('dotenv').config();
+const nodemailer = require('nodemailer');
 var router = express.Router();
 const Login = require(__dirname + '/../models/Login');
 const Student = require(__dirname + '/../models/Student');
@@ -204,6 +205,40 @@ router.delete('/logout', (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+//Send Recovery email on forgot password
+
+// Define the API route
+router.post('/reset-password', async (req, res) => {
+  try {
+    //const { email } = req.body;
+    const email ='harivhari2020@gmail.com';
+    // Create a Nodemailer transporter using Gmail's SMTP server
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD
+      },
+    });
+
+    // Send the email
+    await transporter.sendMail({
+      from: process.env.EMAIL_USERNAME,
+      to: email,
+      subject: 'Test Email',
+      text: 'hello testing ...',
+    });
+
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to send email' });
   }
 });
 
