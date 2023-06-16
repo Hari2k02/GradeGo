@@ -56,7 +56,7 @@ const App = () => {
         const workbook = XLSX.read(data, { type: 'array' });
         resolve(workbook);
       };
-      reader.onerror = (event) => {
+      reader.onerror = () => {
         reject(new Error('Error occurred while reading the file.'));
       };
       reader.readAsArrayBuffer(file);
