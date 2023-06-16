@@ -15,7 +15,7 @@ const ForgotPasswordPage = () => {
 
     // Mock API call to simulate sending the email
     try {
-      const response = await fetch('http://localhost:1337/reset-password', {
+      const response = await fetch('https://gradego-rtib.onrender.com/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
