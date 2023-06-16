@@ -68,22 +68,53 @@ const App = () => {
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const headers = XLSX.utils.sheet_to_json(worksheet, { header: 1 })[0];
     const rows = XLSX.utils.sheet_to_json(worksheet);
-
+  
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const rowData = {};
-
+      const groupedData = {
+        name: {
+          firstName: row.firstName || '',
+          middleName: row.middleName || '',
+          lastName: row.lastName || '',
+        },
+        scholarshipDetails: {
+          nameOfScholarship: row.nameOfScholarship || '',
+          startDate: row.startDate || '',
+          endDate: row.endDate || '',
+          scholarshipProvider: row.scholarshipProvider || '',
+          remarks: row.remarks || '',
+        },
+      };
+  
+      const additionalData = {};
+  
       for (let j = 0; j < headers.length; j++) {
         const header = headers[j];
-        const value = row[header] || '';
-        rowData[header] = value;
+        if (
+          header !== 'firstName' &&
+          header !== 'middleName' &&
+          header !== 'lastName' &&
+          header !== 'nameOfScholarship' &&
+          header !== 'startDate' &&
+          header !== 'endDate' &&
+          header !== 'scholarshipProvider' &&
+          header !== 'remarks'
+        ) {
+          additionalData[header] = row[header] || '';
+        }
       }
-
+  
+      const rowData = {
+        ...groupedData,
+        ...additionalData,
+      };
+  
       jsonData.push(rowData);
     }
-
+  
     return jsonData;
   };
+  
 
   return (
     <StyledContainer>
