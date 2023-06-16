@@ -36,10 +36,9 @@ export default function LoginForm() {
       if (data.user === 'student') {
         navigate('/studdashboard', { replace: true });
       } else if (data.user === 'faculty') {
-        if(data.isAdvisor === 'yes')  {
+        if (data.isAdvisor === 'yes') {
           navigate('/dashboard', { replace: true });
-        }
-        else {
+        } else {
           navigate('/tutordashboard', { replace: true });
         }
       } else if (data.user === 'admin') {
@@ -57,6 +56,12 @@ export default function LoginForm() {
     navigate('/forgot-password');
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      validateUser(event);
+    }
+  };
+
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -69,6 +74,7 @@ export default function LoginForm() {
           value={password}
           label="Password"
           onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={handleKeyPress}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
