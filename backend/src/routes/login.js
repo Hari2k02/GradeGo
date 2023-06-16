@@ -213,8 +213,8 @@ router.delete('/logout', (req, res) => {
 // Define the API route
 router.post('/reset-password', async (req, res) => {
   try {
-    //const { email } = req.body;
-    const email ='harivhari2020@gmail.com';
+    const { email } = req.body;
+    //const email ='harivhari2020@gmail.com';
     // Create a Nodemailer transporter using Gmail's SMTP server
     const transporter = nodemailer.createTransport({
       service: 'gmail',
