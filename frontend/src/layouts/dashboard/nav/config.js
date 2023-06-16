@@ -25,6 +25,11 @@ const navConfig = [
     icon: icon('ic_blog'),
   },
   {
+    title: 'Student Registration',
+    path: '/dashboard/student-registration',
+    icon: icon('ic_user'),
+  },
+  {
     title: 'Logout',
     path: '/login',
     icon: icon('ic_lock'),

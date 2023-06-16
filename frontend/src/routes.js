@@ -18,7 +18,8 @@ import AdminDashboardLayout from './layouts/admindashboard';
 import AdminCourses from './pages/AdminCourses';
 import Home from './pages/home';
 import Contact from './pages/contact';
-import ForgotPassword from './pages/ForgotPassword'; // Import the ForgotPassword component
+import ForgotPassword from './pages/ForgotPassword';
+import FacultyStudRegistration from './pages/FacultyStudRegistration';
 
 export default function Router() {
   const { hellodata } = useContext(DataContext);
@@ -40,6 +41,7 @@ export default function Router() {
         { path: 'attendance-report', element: <AttendanceReport /> },
         { path: 'attendance-setting', element: <AttendanceSetting /> },
         { path: 'timetable', element: <TimeTable /> },
+        { path: 'student-registration',element: <FacultyStudRegistration />},
       ],
     },
     {
@@ -59,7 +61,6 @@ export default function Router() {
         { element: <Navigate to="/admindashboard/app" replace />, index: true },
         { path: 'app', element: <AdminDashboardAppPage /> },
         { path: 'courses', element: <AdminCourses /> },
-        // { path: 'timetable', element:<AdminTimeTable />}
       ],
     },
     {
