@@ -11,7 +11,7 @@ const navConfig = [
   },
   {
     title: 'Attendance Setting',
-    path: '/dashboard/attendance-setting',
+    path: '/tutordashboard/attendance-setting',
     icon: icon('ic_user'),
   },
   {
