@@ -38,7 +38,7 @@ export default function DashboardAppPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            _id: hellodata.details._id,
+            _id: hellodata.name._id,
           }),
         });
 
