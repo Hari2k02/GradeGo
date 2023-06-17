@@ -68,7 +68,7 @@ const RoleSelectionPage = () => {
                             component="img"
                             alt="Tutor"
                             height="300"
-                            image="/assets/images/avatars/avatar_1.jpg"
+                            image="/assets/images/avatars/teacher.jpg"
                         />
                         <RoleText variant="h5" component="h2">
                             Tutor
@@ -81,7 +81,7 @@ const RoleSelectionPage = () => {
                             component="img"
                             alt="Staff Advisor"
                             height="300"
-                            image="/assets/images/avatars/avatar_2.jpg"
+                            image="/assets/images/avatars/advisor.jpg"
                         />
                         <RoleText variant="h5" component="h2">
                             Staff Advisor

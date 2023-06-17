@@ -10,11 +10,6 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'Attendance Setting',
-    path: '/dashboard/attendance-setting',
-    icon: icon('ic_user'),
-  },
-  {
     title: 'Attendance Report',
     path: '/dashboard/attendance-report',
     icon: icon('ic_user'),

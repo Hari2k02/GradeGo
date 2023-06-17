@@ -46,7 +46,6 @@ export default function Router() {
         { element: <Navigate to="/dashboard/app" replace />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'attendance-report', element: <AttendanceReport /> },
-        { path: 'attendance-setting', element: <AttendanceSetting /> },
         { path: 'timetable', element: <TimeTable /> },
         { path: 'student-registration',element: <FacultyStudRegistration />},
       ],
