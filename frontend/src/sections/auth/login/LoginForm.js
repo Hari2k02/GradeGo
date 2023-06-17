@@ -10,6 +10,7 @@ export default function LoginForm() {
   const { hellodata, setHelloData } = useContext(DataContext);
   const [ktuId, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.removeItem('hellodata');
@@ -36,11 +37,7 @@ export default function LoginForm() {
       if (data.user === 'student') {
         navigate('/studdashboard', { replace: true });
       } else if (data.user === 'faculty') {
-        if (data.isAdvisor === 'yes') {
-          navigate('/dashboard', { replace: true });
-        } else {
-          navigate('/tutordashboard', { replace: true });
-        }
+        navigate('/roleselection', {replace : true});
       } else if (data.user === 'admin') {
         navigate('/admindashboard', { replace: true });
       }
@@ -50,7 +47,7 @@ export default function LoginForm() {
     }
   };
 
-  const navigate = useNavigate();
+  
 
   const handleForgotPassword = () => {
     navigate('/forgot-password');

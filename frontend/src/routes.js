@@ -20,6 +20,7 @@ import AdminDashboardLayout from './layouts/admindashboard';
 import AdminCourses from './pages/AdminCourses';
 import Home from './pages/home';
 import Contact from './pages/contact';
+import RoleSelection from './pages/RoleSelection'
 import ForgotPassword from './pages/ForgotPassword';
 import FacultyStudRegistration from './pages/FacultyStudRegistration';
 
@@ -35,6 +36,10 @@ export default function Router() {
       children: [{ element: <Navigate to="/" replace />, index: true }],
     },
     {
+      path: '/roleselection',
+      element: isAuthenticated ? <RoleSelection/> : <Navigate to ="/login" replace/>
+    },
+    {
       path: '/dashboard',
       element: isAuthenticated ? <DashboardLayout /> : <Navigate to="/login" replace />,
       children: [
@@ -46,6 +51,7 @@ export default function Router() {
         { path: 'student-registration',element: <FacultyStudRegistration />},
       ],
     },
+    
     {
       path: '/tutordashboard',
       element: isAuthenticated ? <TutorDashboardLayout /> : <Navigate to="/login" replace />,
