@@ -23,6 +23,7 @@ import Contact from './pages/contact';
 import RoleSelection from './pages/RoleSelection'
 import ForgotPassword from './pages/ForgotPassword';
 import FacultyStudRegistration from './pages/FacultyStudRegistration';
+import TutorAttendanceReport from './pages/TutorAttendanceReport';
 
 export default function Router() {
   const { hellodata } = useContext(DataContext);
@@ -57,7 +58,7 @@ export default function Router() {
       children: [
         { element: <Navigate to="/tutordashboard/app" replace />, index: true },
         { path: 'app', element: <TutorDashboardAppPage /> },
-        { path: 'attendance-report', element: <AttendanceReport /> },
+        { path: 'attendance-report', element: <TutorAttendanceReport /> },
         { path: 'attendance-setting', element: <AttendanceSetting /> },
         { path: 'timetable', element: <TimeTable /> },
       ],

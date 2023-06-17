@@ -10,7 +10,8 @@ const RootContainer = styled('div')({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '100vh',
+    minHeight: '100vh',
+    padding: '2rem',
 });
 
 const HeadingTypography = styled(Typography)({
@@ -24,16 +25,25 @@ const PromptTypography = styled(Typography)({
     marginBottom: '2rem',
     marginTop: '2rem',
 });
+
 const CardContainer = styled('div')({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: '10rem',
+    justifyContent: 'center',
+    gap: '2rem',
+    marginBottom: '2rem',
+
+    '@media (max-width: 1024px)': {
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        gap: '1rem',
+    },
 });
 
 const CustomCard = styled(Card)({
-    width: 300,
-    height: 400,
+    width: '100%',
+    maxWidth: '300px',
     margin: '1rem',
     transition: 'transform 0.3s',
     '&:hover': {
@@ -63,12 +73,13 @@ const RoleSelectionPage = () => {
             variants={staggerContainer}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false, amount: 0.25 }}>
+            viewport={{ once: false, amount: 0.25 }}
+        >
             <RootContainer>
                 <motion.div variants={slideIn("up", "tween", 0, 1)}>
-                <HeadingTypography variant="h2" component="h1">
-                    Role Selection
-                </HeadingTypography>
+                    <HeadingTypography variant="h2" component="h1">
+                        Role Selection
+                    </HeadingTypography>
                 </motion.div>
                 <CardContainer>
                     <motion.div variants={fadeIn("right", "tween", 0.3, 1)}>
@@ -87,25 +98,25 @@ const RoleSelectionPage = () => {
                         </CustomCard>
                     </motion.div>
                     <motion.div variants={fadeIn("left", "tween", 0.3, 1)}>
-                    <CustomCard onClick={() => handleRoleSelection('staff-advisor')}>
-                        <CardActionArea>
-                            <CardMedia
-                                component="img"
-                                alt="Staff Advisor"
-                                height="300"
-                                image="/assets/images/avatars/advisor.jpg"
-                            />
-                            <RoleText variant="h5" component="h2">
-                                Staff Advisor
-                            </RoleText>
-                        </CardActionArea>
-                    </CustomCard>
+                        <CustomCard onClick={() => handleRoleSelection('staff-advisor')}>
+                            <CardActionArea>
+                                <CardMedia
+                                    component="img"
+                                    alt="Staff Advisor"
+                                    height="300"
+                                    image="/assets/images/avatars/advisor.jpg"
+                                />
+                                <RoleText variant="h5" component="h2">
+                                    Staff Advisor
+                                </RoleText>
+                            </CardActionArea>
+                        </CustomCard>
                     </motion.div>
                 </CardContainer>
                 <motion.div variants={slideIn("up", "tween", 0, 1)}>
-                <PromptTypography variant="h3" component="h1">
-                    Please select a role to continue
-                </PromptTypography>
+                    <PromptTypography variant="h3" component="h1">
+                        Please select a role to continue
+                    </PromptTypography>
                 </motion.div>
             </RootContainer>
         </motion.div>
