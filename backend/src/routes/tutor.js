@@ -82,6 +82,63 @@ router.post('/tutor/attendance', async (req, res) => {
   }
 });
 
+router.post('/facdashboard/studentAttendance/faculty', async (req, res) => {
+  try {
+    const { _id, semester, batch, courseCode} = req.body;
+    // const semesterAndBatch = await StaffAdvisor.findOne({ _id: _id }, { semesterHandled: 1, batchHandled: 1 });
+    // const semester = semesterAndBatch.semesterHandled;
+    // const batch = semesterAndBatch.batchHandled;
+    const students = await Students.find({ currentSemester: semester, batch: batch }, { _id: 1 });
+
+    let studentsList = [];
+    for (let i = 0; i < students.length; ++i) {
+      const studentId = await StudentCourses.findOne({ _id: students[i]._id, 'coursesEnrolled.semesterCourses.courseCode': courseCode }, { _id: 1 });
+      const studentNameList = await Students.findOne({ _id: studentId }, { _id: 1, name: 1 });
+      if (studentNameList) {
+        studentsList.push(studentNameList);
+      }
+    }
+
+    let ktuIds = studentsList.map(student => student._id);
+
+    const results = await InternalMark.aggregate([
+      { $unwind: '$courseAssessmentTheory' },
+      { $match: { _id: { $in: ktuIds }, 'courseAssessmentTheory.courseCode': courseCode } },
+      { $unwind: '$courseAssessmentTheory.attendance' },
+      {
+        $group: {
+          _id: '$_id',
+          presentDays: {
+            $sum: {
+              $cond: [
+                { $eq: ['$courseAssessmentTheory.attendance.isPresent', true] },
+                1,
+                0
+              ]
+            }
+          },
+          totalDays: { $sum: 1 }
+        }
+      }
+    ]).exec();
+
+    let output = [];
+    for (let i = 0; i < results.length; ++i) {
+      const studentName = await Students.findOne({ _id: results[i]._id }, { name: 1 });
+      output.push({
+        '_id': results[i]._id,
+        'name': studentName,
+        'presentDays': results[i].presentDays,
+        'totalDays': results[i].totalDays
+      });
+    }
+    return res.json(output);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 
 /*----------------------------------------------------------------
