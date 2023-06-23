@@ -50,7 +50,7 @@ const App = () => {
 
   const sendDataToBackend = (jsonData) => {
     // Make a POST request to the backend endpoint with the jsonData in the request body
-    fetch('http://', {
+    fetch('http://localhost:1337/facdashboard/studentRegistration', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

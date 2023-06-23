@@ -249,6 +249,17 @@ router.post('/facdashboard/batchAttendanceReport', async (req, res) => {
   return res.json(finalOutput);
 });
 
+router.post('/facdashboard/studentRegistration', async (req, res) => {
+  try {
+    const{jsonData} = req.body;
+    console.log(jsonData);
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 
 /**
