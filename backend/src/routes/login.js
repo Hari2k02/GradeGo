@@ -28,6 +28,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 var router = express.Router();
 const Login = require(__dirname + '/../models/Login');
+const OtpModel = require(__dirname + '/../models/Otp');
 const Student = require(__dirname + '/../models/Student');
 const Faculty = require(__dirname + '/../models/Faculty');
 const InternalMark = require(__dirname + '/../models/InternalMark');
@@ -218,6 +219,8 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { email } = req.body;
     otp = generateOTP();
+
+    const otpsend = await OtpModel.findOneAndUpdate({email:email},{otp:otp});
     //const email ='harivhari2020@gmail.com';
     // Create a Nodemailer transporter using Gmail's SMTP server
     const transporter = nodemailer.createTransport({
@@ -246,9 +249,10 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-router.post('/confirm-otp',(req,res)=>{
-  const otpNumber = req.body;
-  if(otpNumber === otp) {
+router.post('/confirm-otp',async (req,res)=>{
+  const { email,otpNumber } = req.body;
+  const expectedOtp = await OtpModel.findOne({email:email});
+  if(otpNumber === expectedOtp.otp) {
     return res.json({status:'ok'});
   }
   else{
