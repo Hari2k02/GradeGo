@@ -106,26 +106,27 @@ const App = () => {
   
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const groupedData = {
-        name: {
-          firstName: row.firstName || '',
-          middleName: row.middleName || '',
-          lastName: row.lastName || '',
-        },
-        scholarshipDetails: {
-          nameOfScholarship: row.nameOfScholarship || '',
-          startDate: row.startDate || '',
-          endDate: row.endDate || '',
-          scholarshipProvider: row.scholarshipProvider || '',
-          remarks: row.remarks || '',
-        },
+      const name = {
+        firstName: String(row.firstName || ''),
+        middleName: String(row.middleName || ''),
+        lastName: String(row.lastName || ''),
+      };
+  
+      const scholarshipDetails = {
+        nameOfScholarship: String(row.nameOfScholarship || ''),
+        startDate: String(row.startDate || ''),
+        endDate: String(row.endDate || ''),
+        scholarshipProvider: String(row.scholarshipProvider || ''),
+        remarks: String(row.remarks || ''),
       };
   
       const additionalData = {};
   
       for (let j = 0; j < headers.length; j++) {
         const header = headers[j];
-        if (
+        if (header === 'dob') {
+          additionalData[header] = row[header] ? new Date(row[header]) : null;
+        } else if (
           header !== 'firstName' &&
           header !== 'middleName' &&
           header !== 'lastName' &&
@@ -135,12 +136,13 @@ const App = () => {
           header !== 'scholarshipProvider' &&
           header !== 'remarks'
         ) {
-          additionalData[header] = row[header] || '';
+          additionalData[header] = String(row[header] || '');
         }
       }
   
       const rowData = {
-        ...groupedData,
+        name,
+        scholarshipDetails,
         ...additionalData,
       };
   
@@ -149,6 +151,8 @@ const App = () => {
   
     return jsonData;
   };
+  
+  
 
   return (
     <StyledContainer>
