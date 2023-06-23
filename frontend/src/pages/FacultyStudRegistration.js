@@ -55,19 +55,23 @@ const App = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(jsonData),
+      body: JSON.stringify({ jsonData }), // Wrap jsonData in an object
     })
       .then((response) => {
         if (response.ok) {
-          console.log('Data uploaded:', jsonData);
+          return response.json(); // Parse the response body as JSON
         } else {
           throw new Error('Error occurred while sending data to the backend.');
         }
       })
-      .catch(() => {
+      .then((data) => {
+        console.log('Data uploaded:', data); // Log the response data
+      })
+      .catch((error) => {
+        console.error(error);
         setError('Error occurred while sending data to the backend.');
       });
-  };
+  };  
 
   const readFile = (file) => {
     return new Promise((resolve, reject) => {

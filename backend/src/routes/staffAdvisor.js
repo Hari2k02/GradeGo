@@ -251,10 +251,11 @@ router.post('/facdashboard/batchAttendanceReport', async (req, res) => {
 
 router.post('/facdashboard/studentRegistration', async (req, res) => {
   try {
-    const{jsonData} = req.body;
+    const jsonData = req.body.jsonData; // Access the jsonData property correctly
     console.log(jsonData);
-  }
-  catch (error) {
+    // Process the data and send a response
+    return res.json({ success: true });
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
