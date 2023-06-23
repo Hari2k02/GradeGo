@@ -98,10 +98,10 @@ export default function DashboardAppPage() {
             <AppCurrentVisits
               title="Current Visits"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Lab', value: 410 },
+                { label: 'Internal', value: 123 },
+                { label: 'Series', value: 34 },
+                { label: 'Semester', value: 323 },
               ]}
               chartColors={[
                 theme.palette.primary.main,
@@ -118,16 +118,13 @@ export default function DashboardAppPage() {
               title="Conversion Rates"
               subheader="(+43%) than last year"
               chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
+                { label: 'Compiler Design', value: 430 },
+                { label: 'Algorithm Analysis', value: 448 },
+                { label: 'Computer Graphics', value: 470 },
+                { label: 'Programming in Python', value: 540 },
+                { label: 'Data Analytics', value: 580 },
+                { label: 'Industrial Economics', value: 490 },
+                { label: 'Comprehensive Course Work', value: 430 },
               ]}
             />
           </Grid>
@@ -136,7 +133,7 @@ export default function DashboardAppPage() {
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
-              chartLabels={['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math']}
+              chartLabels={['CD', 'CGIP', 'AAD', 'IEFT', 'PP', 'CCW']}
               chartData={[
                 { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
                 { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
