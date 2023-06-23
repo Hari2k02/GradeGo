@@ -44,6 +44,10 @@ export default function AccountPopover() {
     navigate('/login', { replace: true });
   } 
 
+  const handleRoleSelection = () =>{
+    navigate('/roleselection', {replace: true});
+  }
+
   return (
     <>
       <IconButton
@@ -105,6 +109,9 @@ export default function AccountPopover() {
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
+        <MenuItem onClick={handleRoleSelection} sx={{ m: 1 }}>
+          Role Selection
+        </MenuItem>
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
@@ -6,7 +6,7 @@ import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover 
 // mocks_
 import Account from '../../../_mock/account';
 import { useNavigate } from 'react-router-dom';
-
+import {DataContext} from "../../../DataContext";
 // ----------------------------------------------------------------------
 
 const MENU_OPTIONS = [
@@ -29,9 +29,13 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
 
   const navigate = useNavigate();
+  const {hellodata}  = useContext(DataContext);
   const account = Account();
   const [open, setOpen] = useState(null);
 
+  const handleRoleSelection = () =>{
+    navigate('/roleselection', {replace : true});
+  }
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
@@ -105,6 +109,11 @@ export default function AccountPopover() {
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
+
+        {hellodata.isAdvisor == "yes" ? <MenuItem onClick={handleRoleSelection} sx={{ m: 1 }}>
+          Role Selection
+        </MenuItem> : ""}
+        
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
