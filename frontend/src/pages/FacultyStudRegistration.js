@@ -39,13 +39,34 @@ const App = () => {
 
         console.log(jsonData);
         // Send jsonData to the backend
-        console.log('Data uploaded:', jsonData);
+        sendDataToBackend(jsonData);
       } catch (error) {
         setError('Error occurred while processing the file. Please try again.');
       }
     } else {
       setError('File format not supported. Please select an Excel file (.xlsx).');
     }
+  };
+
+  const sendDataToBackend = (jsonData) => {
+    // Make a POST request to the backend endpoint with the jsonData in the request body
+    fetch('http://', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log('Data uploaded:', jsonData);
+        } else {
+          throw new Error('Error occurred while sending data to the backend.');
+        }
+      })
+      .catch(() => {
+        setError('Error occurred while sending data to the backend.');
+      });
   };
 
   const readFile = (file) => {
@@ -114,7 +135,6 @@ const App = () => {
   
     return jsonData;
   };
-  
 
   return (
     <StyledContainer>
