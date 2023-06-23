@@ -55,8 +55,8 @@ export default function DashboardAppPage() {
           {/* AppWebsiteVisits component */}
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
-              subheader="(+43%) than last year"
+              title="Performance"
+              // subheader="(+43%) than last year"
               chartLabels={[
                 '01/01/2003',
                 '02/01/2003',
@@ -96,7 +96,7 @@ export default function DashboardAppPage() {
           {/* AppCurrentVisits component */}
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Marks Attained"
               chartData={[
                 { label: 'Lab', value: 410 },
                 { label: 'Internal', value: 123 },
@@ -115,8 +115,8 @@ export default function DashboardAppPage() {
           {/* AppConversionRates component */}
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
+              title="Portion Coverage"
+              // subheader="(+43%) than last year"
               chartData={[
                 { label: 'Compiler Design', value: 430 },
                 { label: 'Algorithm Analysis', value: 448 },

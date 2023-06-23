@@ -49,8 +49,8 @@ export default function StudDashboardAppPage() {
           {/* AppWebsiteVisits section */}
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Performance"
-              subheader="(+43%) than last year"
+              title="Student Performance"
+              // subheader="(+43%) than last year"
               chartLabels={[
                 '01/01/2003',
                 '02/01/2003',
@@ -109,8 +109,8 @@ export default function StudDashboardAppPage() {
           {/* AppConversionRates section */}
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
+              title="Portion Coverage"
+              // subheader="(+43%) than last year"
               chartData={[
                 { label: 'Compiler Design', value: 430 },
                 { label: 'Algorithm Analysis', value: 448 },
