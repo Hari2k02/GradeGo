@@ -13,7 +13,10 @@ const StaffAdvisor = require(__dirname + '/../models/StaffAdvisor');
 const Students = require(__dirname + '/../models/Student');
 const StudentCourses = require(__dirname + '/../models/StudentCourses');
 const InternalMarks = require(__dirname + '/../models/InternalMark');
-
+const Login = require(__dirname + '/../models/Login');
+const generatePassword = require('generate-password');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 /**
  * POST /facdashboard/DisplayTimeTable
  * Returns the time table for display on the staff advisor dashboard.
@@ -253,7 +256,40 @@ router.post('/facdashboard/studentRegistration', async (req, res) => {
   try {
     const jsonData = req.body.jsonData; // Access the jsonData property correctly
     console.log(jsonData);
-    // Process the data and send a response
+    // check if the student is already present
+    // console.log(isPresent);
+    for (let i = 0; i < jsonData.length; i++) {
+      const isPresent = await Students.findOne({ _id: jsonData[i].ktuId.toLowerCase()});
+      if (isPresent) {
+        // student already present
+        console.log('Student already present');
+      }
+      else {
+        // find the present valriables and then add the student
+        const newStudent = await Students.create({
+          _id: jsonData[i].ktuId.toLowerCase(),
+          admno: jsonData[i].admno,
+          name: {
+            firstName: jsonData[i].name.firstName,
+            lastName: jsonData[i].name.lastName
+          },
+          currentSemester: jsonData[i].currentSemester,
+          batch: jsonData[i].batch,
+          department: jsonData[i].department
+        });
+        const password = generatePassword.generate({
+          length: 8,  // Specify the desired length of the password
+          numbers: true,  // Include numbers in the password
+          symbols: true,  // Include symbols in the password
+          uppercase: true,  // Include uppercase letters in the password
+          lowercase: true,  // Include lowercase letters in the password
+        });
+        console.log(password);
+        const psswd = bcrypt.hashSync(password, saltRounds);
+        const newLogin = await Login.create({_id:jsonData[i].ktuId.toLowerCase(), password:psswd});
+        console.log('New student created:', newStudent);
+      }
+    }
     return res.json({ success: true });
   } catch (error) {
     console.error(error);
