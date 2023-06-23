@@ -7,7 +7,8 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Select,
+    Stack,
+    TextField,
     MenuItem,
     CircularProgress,
     Button,
@@ -31,6 +32,9 @@ const TutorAttendanceReport = () => {
     const { facsemdata } = useContext(FacultyDataContext);
     const [selectedClass, setSelectedClass] = useState('');
     const [courses, setCourses] = useState([]);
+    const [semester, setSemester] = useState(0);
+    // const [courseCode, setCourseCode] = useState('');
+    const [batch, setBatch] = useState(0);
     const [attendanceData, setAttendanceData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
@@ -41,32 +45,32 @@ const TutorAttendanceReport = () => {
     const { hellodata } = useContext(DataContext);
 
     useEffect(() => {
-        // const fetchCourses = async () => {
-        //     try {
-        //         const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/semesterCourses', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             body: JSON.stringify({ _id: hellodata.name._id }),
-        //         });
+    //     const fetchCourses = async () => {
+    //         try {
+    //             const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/semesterCourses', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json',
+    //                 },
+    //                 body: JSON.stringify({ _id: hellodata.name._id }),
+    //             });
 
-        //         if (response.ok) {
-        //             const data = await response.json();
-        //             setCourses(data);
-        //             setSelectedClass(data.length > 0 ? data[0]._id : '');
-        //         } else {
-        //             console.error('Error fetching courses');
-        //         }
-        //     } catch (error) {
-        //         console.error('Error fetching courses:', error);
-        //     }
-        // };
+    //             if (response.ok) {
+    //                 const data = await response.json();
+    //                 setCourses(data);
+    //                 setSelectedClass(data.length > 0 ? data[0]._id : '');
+    //             } else {
+    //                 console.error('Error fetching courses');
+    //             }
+    //         } catch (error) {
+    //             console.error('Error fetching courses:', error);
+    //         }
+    //     };
 
-        // fetchCourses();
+    //     fetchCourses();
         setCourses(facsemdata.facultyDetails.coursesHandled);
         console.log(courses);
-        setSelectedClass(courses.length > 0 ? courses[0].courseCode : '');
+    //     setSelectedClass(courses.length > 0 ? courses[0].courseCode : '');
 
     }, []);
 
@@ -80,9 +84,9 @@ const TutorAttendanceReport = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ _id: hellodata.name._id, courseCode: selectedClass }),
+                    body: JSON.stringify({ _id: hellodata.name._id,semester: semester, batch: batch,  courseCode: selectedClass }),
                 });
-
+                
                 if (response.ok) {
                     const data = await response.json();
                     setAttendanceData(data);
@@ -338,13 +342,78 @@ const TutorAttendanceReport = () => {
 
             </div>
 
-            <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
+            {/* <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
                 {courses.map((course) => (
                     <MenuItem key={course.courseCode} value={course.courseCode}>
                         {course.courseCode} - {course.courseName}
                     </MenuItem>
                 ))}
-            </Select>
+            </Select> */}
+
+            <Stack direction="row" spacing={2} alignItems="center" mb={3}>
+                <TextField
+                    select
+                    fullWidth
+                    label="Select Semester"
+                    value={semester}
+                    onChange={(event) => setSemester(event.target.value)}
+                    variant="outlined"
+                >
+                    {Array.from(new Set(facsemdata.facultyDetails.coursesHandled.map((course) => course.semester))).map((semester) => (
+                        <MenuItem key={semester} value={semester}>
+                            Semester: {semester}
+                        </MenuItem>
+                    ))}
+                </TextField>
+
+                {semester > 0 && (
+                    <>
+                        <TextField
+                            select
+                            fullWidth
+                            label="Select Batch"
+                            value={batch}
+                            onChange={(event) => setBatch(event.target.value)}
+                            variant="outlined"
+                        >
+                            {Array.from(
+                                new Set(
+                                    facsemdata.facultyDetails.coursesHandled
+                                        .filter((course) => course.semester === semester)
+                                        .map((course) => course.batch)
+                                )
+                            ).map((batch) => (
+                                <MenuItem key={batch} value={batch}>
+                                    Batch: {batch}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+                        <TextField
+                            select
+                            fullWidth
+                            label="Select Course Code"
+                            value={selectedClass}
+                            onChange={(event) => {
+                                setSelectedClass(event.target.value);
+                                handleClassChange(event);
+                            }}
+                            variant="outlined"
+                        >
+                            {facsemdata.facultyDetails.coursesHandled
+                                .filter((course) => course.semester === semester && course.batch === batch)
+                                .map((course) => (
+                                    <MenuItem key={course._id} value={course.courseCode}>
+                                        Course Code: {course.courseCode}
+                                    </MenuItem>
+                                ))}
+                        </TextField>
+                    </>
+                )}
+            </Stack>
+
+
+
 
             {isGeneratingReport && (
                 <div
