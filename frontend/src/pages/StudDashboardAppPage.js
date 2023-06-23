@@ -3,7 +3,8 @@
   Description: This component represents the dashboard page for the student app.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -16,7 +17,14 @@ import {
 
 export default function StudDashboardAppPage() {
   const theme = useTheme();
-
+    const navigate = useNavigate();
+    useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
   return (
     <>
       {/* Set the document title */}

@@ -16,15 +16,26 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * DashboardAppPage component.
  * Renders the dashboard page.
  */
 export default function DashboardAppPage() {
-  const { facsemdata, setFacSemData } = useContext(FacultyDataContext);
+  const { setFacSemData } = useContext(FacultyDataContext);
   const { hellodata } = useContext(DataContext);
   const theme = useTheme();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
+
 
   useEffect(() => {
     /**
@@ -56,9 +67,7 @@ export default function DashboardAppPage() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log(facsemdata);
-  }, [facsemdata]);
+
 
   return (
     <>

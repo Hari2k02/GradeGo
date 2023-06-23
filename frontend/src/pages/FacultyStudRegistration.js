@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Container, Grid, Typography } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/system';
 import * as XLSX from 'xlsx';
+import { useNavigate } from 'react-router-dom';
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   marginTop: theme.spacing(4),
@@ -24,6 +25,15 @@ const StyledErrorMessage = styled(Typography)(({ theme }) => ({
 const App = () => {
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
+
+    const navigate = useNavigate();
+    useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];

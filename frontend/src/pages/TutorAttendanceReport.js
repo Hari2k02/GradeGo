@@ -27,6 +27,7 @@ import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 
 const TutorAttendanceReport = () => {
     const { facsemdata } = useContext(FacultyDataContext);
@@ -43,34 +44,41 @@ const TutorAttendanceReport = () => {
 
 
     const { hellodata } = useContext(DataContext);
+    const navigate = useNavigate();
+    useEffect(() => {
+        const storedData = localStorage.getItem('hellodata');
+        if (!storedData) {
+            navigate('/login', { replace: true });
+        }
+    }, [])
 
     useEffect(() => {
-    //     const fetchCourses = async () => {
-    //         try {
-    //             const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/semesterCourses', {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 body: JSON.stringify({ _id: hellodata.name._id }),
-    //             });
+        //     const fetchCourses = async () => {
+        //         try {
+        //             const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/semesterCourses', {
+        //                 method: 'POST',
+        //                 headers: {
+        //                     'Content-Type': 'application/json',
+        //                 },
+        //                 body: JSON.stringify({ _id: hellodata.name._id }),
+        //             });
 
-    //             if (response.ok) {
-    //                 const data = await response.json();
-    //                 setCourses(data);
-    //                 setSelectedClass(data.length > 0 ? data[0]._id : '');
-    //             } else {
-    //                 console.error('Error fetching courses');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching courses:', error);
-    //         }
-    //     };
+        //             if (response.ok) {
+        //                 const data = await response.json();
+        //                 setCourses(data);
+        //                 setSelectedClass(data.length > 0 ? data[0]._id : '');
+        //             } else {
+        //                 console.error('Error fetching courses');
+        //             }
+        //         } catch (error) {
+        //             console.error('Error fetching courses:', error);
+        //         }
+        //     };
 
-    //     fetchCourses();
+        //     fetchCourses();
         setCourses(facsemdata.facultyDetails.coursesHandled);
         console.log(courses);
-    //     setSelectedClass(courses.length > 0 ? courses[0].courseCode : '');
+        //     setSelectedClass(courses.length > 0 ? courses[0].courseCode : '');
 
     }, []);
 
@@ -84,9 +92,9 @@ const TutorAttendanceReport = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ _id: hellodata.name._id,semester: semester, batch: batch,  courseCode: selectedClass }),
+                    body: JSON.stringify({ _id: hellodata.name._id, semester: semester, batch: batch, courseCode: selectedClass }),
                 });
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     setAttendanceData(data);

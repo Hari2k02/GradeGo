@@ -25,12 +25,22 @@ import {
   TextField,
 } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * The AdminCourses component renders a form to manage faculty courses.
  */
 const AdminCourses = () => {
   // Array of available semesters
+  const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
+
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
   // State variables
@@ -51,6 +61,9 @@ const AdminCourses = () => {
       fetchCourses();
     }
   }, [selectedSemester]);
+
+
+  
 
   /**
    * Event handler for semester change.

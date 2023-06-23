@@ -12,6 +12,7 @@
 */
 
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   MenuItem,
@@ -37,6 +38,13 @@ const Timetable = () => {
   // Access shared data using the DataContext
   const { hellodata } = useContext(DataContext);
   const { details, course } = hellodata;
+  const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if (!storedData) {
+      navigate('/login', { replace: true });
+    }
+  }, [])
 
   // State variables
   const [timetableData, setTimetableData] = useState({ days: [] });

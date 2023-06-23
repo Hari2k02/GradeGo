@@ -25,6 +25,7 @@ import { saveAs } from 'file-saver';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 
 const AttendanceReport = () => {
   const [selectedClass, setSelectedClass] = useState('');
@@ -37,6 +38,15 @@ const AttendanceReport = () => {
 
 
   const { hellodata } = useContext(DataContext);
+  
+  const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
 
   useEffect(() => {
     const fetchCourses = async () => {

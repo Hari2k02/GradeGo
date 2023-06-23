@@ -13,15 +13,34 @@ function DataProvider ({ children })  {
       : {
           status: '',
           user: '',
+          isAdvisor: '',
+          name: {},
           details: {},
-          course: {},
+          course: [],
           accessToken: '',
+          refreshToken: '',
         };
   });
 
   useEffect(() => {
     localStorage.setItem('hellodata', JSON.stringify(hellodata));
   }, [hellodata]);
+
+  //   useEffect(() => {
+  //   const storedData = localStorage.getItem('hellodata');
+  //   if (!storedData) {
+  //     setHelloData({
+  //       status: '',
+  //       user: '',
+  //       isAdvisor: '',
+  //       name: {},
+  //       details: {},
+  //       course: [],
+  //       accessToken: '',
+  //       refreshToken: '',
+  //     });
+  //   }
+  // }, []);
 
   return (
     <DataContext.Provider value={useMemo(() => ({ hellodata, setHelloData }), [hellodata, setHelloData])}>

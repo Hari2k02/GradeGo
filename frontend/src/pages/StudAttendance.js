@@ -4,6 +4,7 @@
 */
 
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import {
   Grid,
@@ -34,6 +35,15 @@ export default function StudAttendance() {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [attendanceData, setAttendanceData] = useState({});
   const [isNoDataPopupOpen, setIsNoDataPopupOpen] = useState(false);
+
+    const navigate = useNavigate();
+    useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
 
   // Handle course selection
   const handleCourseChange = (event) => {

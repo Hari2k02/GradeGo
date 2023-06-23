@@ -4,7 +4,7 @@
   This file contains the implementation of the Admin Dashboard page of the GradeGo application.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -14,12 +14,21 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
-
+import { useNavigate } from 'react-router-dom';
 /**
  * DashboardAppPage component renders the Admin Dashboard page.
  */
 export default function DashboardAppPage() {
   const theme = useTheme();
+  
+  const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
 
   return (
     <>

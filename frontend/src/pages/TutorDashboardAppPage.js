@@ -6,6 +6,7 @@
 
 import { Helmet } from 'react-helmet-async';
 import React, { useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 import { FacultyDataContext } from '../FacultyDataContext';
@@ -25,7 +26,14 @@ export default function DashboardAppPage() {
   const { facsemdata, setFacSemData } = useContext(FacultyDataContext);
   const { hellodata } = useContext(DataContext);
   const theme = useTheme();
-
+    const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
   useEffect(() => {
     /**
      * Fetches data from the API.

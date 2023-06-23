@@ -28,6 +28,7 @@ import {
 } from '@mui/material';
 import Label from '../components/label';
 import Scrollbar from '../components/scrollbar';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -55,6 +56,15 @@ export default function AttendanceSetting() {
   const [selected, setSelected] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [filteredStudents, setFilteredStudents] = useState(userList);
+  
+  const navigate = useNavigate();
+  useEffect(() => {
+    const storedData = localStorage.getItem('hellodata');
+    if(!storedData)
+    {
+        navigate('/login', { replace: true });
+    }
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {

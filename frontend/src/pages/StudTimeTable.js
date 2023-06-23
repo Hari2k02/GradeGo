@@ -4,6 +4,7 @@
 */
 
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Stack } from '@mui/material';
 import { DataContext } from '../DataContext';
 import { Helmet } from 'react-helmet-async';
@@ -12,6 +13,14 @@ const Timetable = () => {
     // Accessing the global data context
     const { hellodata } = useContext(DataContext);
     const { details } = hellodata;
+
+    const navigate = useNavigate();
+    useEffect(() => {
+        const storedData = localStorage.getItem('hellodata');
+        if (!storedData) {
+            navigate('/login', { replace: true });
+        }
+    }, [])
 
     // State variable to store the timetable data
     const [timetableData, setTimetableData] = useState({ days: [] });
