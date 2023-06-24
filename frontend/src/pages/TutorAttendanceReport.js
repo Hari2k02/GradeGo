@@ -40,11 +40,15 @@ const TutorAttendanceReport = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedFormat, setSelectedFormat] = useState('');
-    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
-
 
     const { hellodata } = useContext(DataContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+
+        console.log(attendanceData);
+    }, [attendanceData])
+
     useEffect(() => {
         const storedData = localStorage.getItem('hellodata');
         if (!storedData) {
@@ -53,32 +57,9 @@ const TutorAttendanceReport = () => {
     }, [])
 
     useEffect(() => {
-        //     const fetchCourses = async () => {
-        //         try {
-        //             const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/semesterCourses', {
-        //                 method: 'POST',
-        //                 headers: {
-        //                     'Content-Type': 'application/json',
-        //                 },
-        //                 body: JSON.stringify({ _id: hellodata.name._id }),
-        //             });
 
-        //             if (response.ok) {
-        //                 const data = await response.json();
-        //                 setCourses(data);
-        //                 setSelectedClass(data.length > 0 ? data[0]._id : '');
-        //             } else {
-        //                 console.error('Error fetching courses');
-        //             }
-        //         } catch (error) {
-        //             console.error('Error fetching courses:', error);
-        //         }
-        //     };
-
-        //     fetchCourses();
         setCourses(facsemdata.facultyDetails.coursesHandled);
         console.log(courses);
-        //     setSelectedClass(courses.length > 0 ? courses[0].courseCode : '');
 
     }, []);
 
@@ -87,7 +68,7 @@ const TutorAttendanceReport = () => {
             try {
                 setIsLoading(true);
 
-                const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/studentAttendance', {
+                const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/studentAttendance/faculty', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -126,107 +107,6 @@ const TutorAttendanceReport = () => {
         setOpenDialog(true);
     };
 
-
-    const handleGenerateBatchExcelReport = async () => {
-        try {
-            setIsGeneratingReport(true);
-            const response = await fetch('https://gradego-rtib.onrender.com/facdashboard/batchAttendanceReport', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ _id: hellodata.name._id }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Batch attendance report generated:', data);
-
-                const workbook = new ExcelJS.Workbook();
-                const worksheet = workbook.addWorksheet('Batch Attendance Report');
-
-                // Define column widths
-                worksheet.getColumn(1).width = 12;
-                worksheet.getColumn(2).width = 30;
-
-                // Add headers for roll number and student name
-                const headerRow = worksheet.addRow(['Roll Number', 'Student Name']);
-                headerRow.font = { bold: true };
-                headerRow.alignment = { horizontal: 'center' };
-
-                // Add attendance data column headers for each course
-                data.forEach((student) => {
-                    student.courses.forEach((course, index) => {
-                        const courseCode = course.courseCode;
-
-                        // Calculate the column index based on the course index
-                        const columnIndex = 3 + index * 3;
-
-                        // Set column headers for present days, total days, and present percentage
-                        worksheet.getCell(1, columnIndex).value = `${courseCode} - Present Days`;
-                        worksheet.getCell(1, columnIndex).font = { bold: true };
-                        worksheet.getCell(1, columnIndex).alignment = { horizontal: 'center' };
-                        worksheet.getColumn(columnIndex).width = 15;
-
-                        worksheet.getCell(1, columnIndex + 1).value = `${courseCode} - Total Days`;
-                        worksheet.getCell(1, columnIndex + 1).font = { bold: true };
-                        worksheet.getCell(1, columnIndex + 1).alignment = { horizontal: 'center' };
-                        worksheet.getColumn(columnIndex + 1).width = 15;
-
-                        worksheet.getCell(1, columnIndex + 2).value = `${courseCode} - Present Percentage`;
-                        worksheet.getCell(1, columnIndex + 2).font = { bold: true };
-                        worksheet.getCell(1, columnIndex + 2).alignment = { horizontal: 'center' };
-                        worksheet.getColumn(columnIndex + 2).width = 15;
-                    });
-                });
-
-                // Add attendance data for each student and course
-                data.forEach((student, index) => {
-                    const rowData = [index + 1, `${student.name.firstName} ${student.name.lastName}`];
-
-                    // Add attendance data for each course
-                    student.courses.forEach((course) => {
-                        //const columnIndex = 3 + courseIndex * 3;
-                        rowData.push(
-                            course.presentDays,
-                            course.totalDays,
-                            course.totalDays === 0 ? 'N/A' : `${Math.round((course.presentDays / course.totalDays) * 100)}`
-                        );
-                    });
-
-                    // Add row to worksheet
-                    const dataRow = worksheet.addRow(rowData);
-                    dataRow.alignment = { horizontal: 'center' };
-                });
-
-                // Auto-fit column widths to content
-                worksheet.columns.forEach((column) => {
-                    column.eachCell({ includeEmpty: true }, (cell) => {
-                        const desiredWidth = Math.max((cell.value || '').toString().length + 2, 12); // Minimum column width of 12
-                        column.width = Math.max(column.width, desiredWidth);
-                    });
-                });
-
-                // Calculate the width of the last column based on the maximum content width
-                const lastColumn = worksheet.getColumn(worksheet.columns.length);
-                const maxContentWidth = lastColumn.width;
-                const extraWidth = 10; // Additional width for padding
-                lastColumn.width = Math.max(maxContentWidth + extraWidth, 20); // Set the minimum width to 20
-
-                const fileName = 'Batch_Attendance_Report';
-                workbook.xlsx.writeBuffer().then((buffer) => {
-                    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    saveAs(blob, `${fileName}.xlsx`);
-                });
-            } else {
-                console.error('Error generating batch attendance report');
-            }
-        } catch (error) {
-            console.error('Error generating batch attendance report:', error);
-        } finally {
-            setIsGeneratingReport(false); // Set loading state to false
-        }
-    };
 
     const handleDialogClose = () => {
         setOpenDialog(false);
@@ -333,30 +213,7 @@ const TutorAttendanceReport = () => {
                 <Typography variant="h4" component="h1" gutterBottom>
                     Attendance Report
                 </Typography>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleGenerateBatchExcelReport}
-                    disabled={isGeneratingReport}
-                    style={{ alignSelf: 'center', marginTop: '2rem' }}
-                >
-                    {isGeneratingReport ? (
-                        <CircularProgress size={24} style={{ marginRight: '0.5rem' }} />
-                    ) : (
-                        'Generate Batch Attendance Report'
-                    )}
-                </Button>
-
-
             </div>
-
-            {/* <Select value={selectedClass} onChange={handleClassChange} style={{ width: '100%', marginBottom: '3rem' }}>
-                {courses.map((course) => (
-                    <MenuItem key={course.courseCode} value={course.courseCode}>
-                        {course.courseCode} - {course.courseName}
-                    </MenuItem>
-                ))}
-            </Select> */}
 
             <Stack direction="row" spacing={2} alignItems="center" mb={3}>
                 <TextField
@@ -422,28 +279,6 @@ const TutorAttendanceReport = () => {
 
 
 
-
-            {isGeneratingReport && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                        zIndex: 9999,
-                    }}
-                >
-                    <CircularProgress />
-                    <div style={{ marginLeft: '2rem' }}>
-                        <Typography>Downloading Batch Attendance Report...</Typography>
-                    </div>
-                </div>
-            )}
 
 
             {isLoading ? (

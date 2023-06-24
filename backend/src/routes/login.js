@@ -28,6 +28,7 @@ require('dotenv').config();
 const nodemailer = require('nodemailer');
 var router = express.Router();
 const Login = require(__dirname + '/../models/Login');
+const OtpModel = require(__dirname + '/../models/Otp');
 const Student = require(__dirname + '/../models/Student');
 const Faculty = require(__dirname + '/../models/Faculty');
 const InternalMark = require(__dirname + '/../models/InternalMark');
@@ -36,6 +37,7 @@ const jwt = require('jsonwebtoken');
 const StaffAdvisor = require(__dirname + '/../models/StaffAdvisor');
 const StudentCourses = require(__dirname + '/../models/StudentCourses');
 const { authenticateToken, generateAccessToken } = require(__dirname + '/../middlewares/auth');
+const {generateOTP} = require(__dirname + '/../middlewares/otp');
 const Courses = require(__dirname + '/../models/Courses');
 
 // Array to store refresh tokens
@@ -208,12 +210,17 @@ router.delete('/logout', (req, res) => {
   }
 });
 
+let otp;
+
 //Send Recovery email on forgot password
 
 // Define the API route
 router.post('/reset-password', async (req, res) => {
   try {
     const { email } = req.body;
+    otp = generateOTP();
+
+    const otpsend = await OtpModel.findOneAndUpdate({email:email},{otp:otp});
     //const email ='harivhari2020@gmail.com';
     // Create a Nodemailer transporter using Gmail's SMTP server
     const transporter = nodemailer.createTransport({
@@ -231,8 +238,8 @@ router.post('/reset-password', async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_USERNAME,
       to: email,
-      subject: 'Test Email',
-      text: 'hello testing ...',
+      subject: 'OTP for forgot-password confirmation',
+      text: otp,
     });
 
     res.status(200).json({ message: 'Email sent successfully' });
@@ -241,6 +248,18 @@ router.post('/reset-password', async (req, res) => {
     res.status(500).json({ error: 'Failed to send email' });
   }
 });
+
+router.post('/confirm-otp',async (req,res)=>{
+  const { email,otpNumber } = req.body;
+  const expectedOtp = await OtpModel.findOne({email:email});
+  if(otpNumber === expectedOtp.otp) {
+    return res.json({status:'ok'});
+  }
+  else{
+    return res.json({status:'error'});
+  }
+});
+
 
 // Export the router
 module.exports = router;
