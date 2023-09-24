@@ -52,7 +52,28 @@ router.post('/attendance/student/', async (req, res) => {
     if (output.length === 0) {
       return res.status(500).json({ error: 'Internal server error' });
     }
-    return res.json(output);
+
+    //logic for sending all attendace for given courseCode
+    if (!_id || !courseCode) {
+      return res.status(400).json({ error: 'Missing required parameters' });
+    }
+
+    const studentAttendance = await InternalMarks.findOne(
+      { _id },
+      {
+        'courseAssessmentTheory': {
+          $elemMatch: { 'courseCode': courseCode }
+        }
+      }
+    );
+
+    if (!studentAttendance) {
+      return res.status(404).json({ error: 'Attendance data not found' });
+    }
+
+    const courseAttendance = studentAttendance.courseAssessmentTheory[0].attendance;
+
+    return res.json({output,courseAttendance});
   }
   catch (error) {
     console.error(error);
