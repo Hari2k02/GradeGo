@@ -18,6 +18,7 @@ import StudTimeTable from './pages/StudTimeTable';
 import AdminDashboardAppPage from './pages/AdminDashboardAppPage';
 import AdminDashboardLayout from './layouts/admindashboard';
 import AdminCourses from './pages/AdminCourses';
+import NewFaculty from './pages/AdminNewFaculty';
 import Home from './pages/home';
 import Contact from './pages/contact';
 import RoleSelection from './pages/RoleSelection'
@@ -80,6 +81,7 @@ export default function Router() {
         { element: <Navigate to="/admindashboard/app" replace />, index: true },
         { path: 'app', element: <AdminDashboardAppPage /> },
         { path: 'courses', element: <AdminCourses /> },
+        { path: 'new-faculty', element:<NewFaculty />}
       ],
     },
     {

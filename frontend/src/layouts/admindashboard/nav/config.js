@@ -10,8 +10,13 @@ const navConfig = [
     icon: icon('ic_analytics'),
   },
   {
-    title: 'Courses',
+    title: 'Course Assignment',
     path: '/admindashboard/courses',
+    icon: icon('ic_user'),
+  },
+  {
+    title: 'New Faculty',
+    path: '/admindashboard/new-faculty',
     icon: icon('ic_user'),
   },
   {
