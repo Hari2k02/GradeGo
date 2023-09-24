@@ -1,15 +1,8 @@
-/*
-  File: StudAttendance.js
-  Description: This file contains the component for displaying student attendance.
-*/
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import {
   Grid,
-  MenuItem,
-  TextField,
   FormControl,
   CircularProgress,
   Dialog,
@@ -23,6 +16,8 @@ import {
 import { DataContext } from '../DataContext';
 import { AppCurrentVisits } from '../sections/@dashboard/app';
 import { Helmet } from 'react-helmet-async';
+import Calendar from 'react-calendar'; // Import the react-calendar component
+import 'react-calendar/dist/Calendar.css'; // Import the styles for the calendar
 
 /**
  * Component for displaying student attendance.
@@ -35,20 +30,15 @@ export default function StudAttendance() {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [attendanceData, setAttendanceData] = useState({});
   const [isNoDataPopupOpen, setIsNoDataPopupOpen] = useState(false);
+  const [markedDates, setMarkedDates] = useState({});
 
-    const navigate = useNavigate();
-    useEffect(() => {
+  const navigate = useNavigate();
+  useEffect(() => {
     const storedData = localStorage.getItem('hellodata');
-    if(!storedData)
-    {
-        navigate('/login', { replace: true });
+    if (!storedData) {
+      navigate('/login', { replace: true });
     }
-  }, [])
-
-  // Handle course selection
-  const handleCourseChange = (event) => {
-    setSelectedCourse(event.target.value);
-  };
+  }, []);
 
   // Set the initial selected course
   useEffect(() => {
@@ -78,7 +68,7 @@ export default function StudAttendance() {
           courseCode: selectedCourse,
         }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setAttendanceData(data);
@@ -97,7 +87,37 @@ export default function StudAttendance() {
       setLoading(false);
     }
   };
-  
+
+  useEffect(() => {
+    if (attendanceData && Array.isArray(attendanceData.courseAttendance)) {
+      const processedDates = {};
+
+      for (const entry of attendanceData.courseAttendance) {
+        const date = new Date(entry.date);
+        const isPresent = entry.isPresent;
+        const hour = entry.hour;
+        const dateString = date.toISOString().split('T')[0];
+
+        // Set the color based on isPresent and handle multiple hours
+        if (processedDates[dateString]) {
+          if (isPresent) {
+            processedDates[dateString].style = 'yellow'; // Student is present for some hours
+          } else {
+            processedDates[dateString].style = 'red'; // Student is absent for some hours
+          }
+        } else {
+          processedDates[dateString] = {
+            style: isPresent ? 'green' : 'red',
+          };
+        }
+      }
+
+      setMarkedDates(processedDates);
+    } else {
+      // Handle the case where the data is missing or not in the expected format
+      console.error('Invalid or missing data in attendanceData');
+    }
+  }, [attendanceData]);
 
   // Close the no data popup
   const handleNoDataPopupClose = () => {
@@ -120,22 +140,7 @@ export default function StudAttendance() {
       <Grid item xs={12} md={6} lg={4} style={{ marginBottom: '2rem' }}>
         {/* Dropdown to select course */}
         <FormControl fullWidth style={{ marginBottom: '1.75rem' }}>
-          <TextField
-            id="course-select"
-            select
-            label="Select a Course"
-            value={selectedCourse}
-            onChange={handleCourseChange}
-            SelectProps={{
-              displayEmpty: true,
-            }}
-          >
-            {hellodata.details.studentCourses.coursesEnrolled[0]?.semesterCourses.map((course) => (
-              <MenuItem key={course._id} value={course.courseCode}>
-                {course.courseCode}
-              </MenuItem>
-            ))}
-          </TextField>
+          {/* ... Existing code ... */}
         </FormControl>
 
         {/* Loading Indicator */}
@@ -182,6 +187,32 @@ export default function StudAttendance() {
           </DialogActions>
         </Dialog>
       </Grid>
+      {/* Calendar */}
+      <div style={{ height: '100%', width: '100%' }}>
+        <Calendar
+          tileContent={({ date }) => {
+            const dateString = date.toISOString().split('T')[0];
+            const tileStyle = markedDates[dateString] || {};
+            const cellStyle = {
+              backgroundColor: tileStyle.style,
+              borderRadius: '50%',
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            };
+
+            return (
+              <div style={cellStyle}>
+                {tileStyle.style === 'green' && 'P'} {/* Display 'P' for green cells */}
+                {tileStyle.style === 'red' && 'A'} {/* Display 'A' for red cells */}
+                {tileStyle.style === 'yellow' && 'Y'} {/* Display 'Y' for yellow cells */}
+              </div>
+            );
+          }}
+        />
+      </div>
     </>
   );
 }
