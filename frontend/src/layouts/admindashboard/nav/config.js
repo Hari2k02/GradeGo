@@ -20,6 +20,11 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
+    title: 'New Course', 
+    path: '/admindashboard/new-course', 
+    icon: icon('ic_analytics'),
+  },
+  {
     title: 'Logout',
     path: '/login',
     icon: icon('ic_lock'),
