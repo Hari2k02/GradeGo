@@ -78,7 +78,7 @@ export default function StudAttendance() {
           courseCode: selectedCourse,
         }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         setAttendanceData(data);
@@ -86,15 +86,18 @@ export default function StudAttendance() {
       } else {
         // Handle error response
         console.log('Error:', response.status);
-        setAttendanceData({});
+        setAttendanceData({}); // Set it to an empty object or appropriate initial value
         setLoading(false);
         setIsNoDataPopupOpen(true);
       }
     } catch (error) {
       // Handle fetch error
       console.log('Fetch Error:', error);
+      setAttendanceData({}); // Set it to an empty object or appropriate initial value
+      setLoading(false);
     }
   };
+  
 
   // Close the no data popup
   const handleNoDataPopupClose = () => {
@@ -152,10 +155,14 @@ export default function StudAttendance() {
           <AppCurrentVisits
             title="Students Attendance"
             chartData={[
-              { label: 'Present', value: attendanceData[0]?.presentDays || 0 },
+              {
+                label: 'Present',
+                value: attendanceData?.output?.[0]?.presentDays || 0,
+              },
               {
                 label: 'Absent',
-                value: attendanceData[0]?.totalDays ? attendanceData[0].totalDays - attendanceData[0].presentDays : 0,
+                value:
+                  attendanceData?.output?.[0]?.totalDays - attendanceData?.output?.[0]?.presentDays || 0,
               },
             ]}
             chartColors={[theme.palette.success.main, theme.palette.error.main]}
