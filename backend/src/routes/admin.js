@@ -81,4 +81,15 @@ router.post('/admin/facultyCourseAssignment', async (req, res) => {
   }
 });
 
+router.post('/admin/newFaculty', async (req, res) => {
+  try {
+    const input = req.body;    
+    const out = await Faculty.create(input);
+    return res.json({ status: 'ok' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
