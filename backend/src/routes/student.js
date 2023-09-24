@@ -83,4 +83,39 @@ router.post('/student/studentcourses', async (req, res) => {
   }
 });
 
+
+
+router.post('/getCourse/attendance', async (req, res) => {
+  try {
+
+    const { _id, courseCode } = req.body;
+
+
+    if (!_id || !courseCode) {
+      return res.status(400).json({ error: 'Missing required parameters' });
+    }
+
+    const studentAttendance = await InternalMarks.findOne(
+      { _id },
+      {
+        'courseAssessmentTheory': {
+          $elemMatch: { 'courseCode': courseCode }
+        }
+      }
+    );
+
+    if (!studentAttendance) {
+      return res.status(404).json({ error: 'Attendance data not found' });
+    }
+
+    const courseAttendance = studentAttendance.courseAssessmentTheory[0].attendance;
+
+    res.json({ courseAttendance });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
+
