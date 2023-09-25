@@ -95,7 +95,7 @@ export default function StudAttendance() {
       for (const entry of attendanceData.courseAttendance) {
         const date = new Date(entry.date);
         const isPresent = entry.isPresent;
-        const hour = entry.hour;
+        //const hour = entry.hour;
         const dateString = date.toISOString().split('T')[0];
 
         // Set the color based on isPresent and handle multiple hours
