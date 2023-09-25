@@ -12,6 +12,8 @@ import {
   Button,
   Stack,
   Typography,
+  TextField,
+  MenuItem,
 } from '@mui/material';
 import { DataContext } from '../DataContext';
 import { AppCurrentVisits } from '../sections/@dashboard/app';
@@ -53,6 +55,10 @@ export default function StudAttendance() {
       fetchAttendanceData();
     }
   }, [selectedCourse, hellodata]);
+
+  const handleCourseChange = (event) => {
+    setSelectedCourse(event.target.value);
+  };
 
   // Fetch attendance data from the server
   const fetchAttendanceData = async () => {
@@ -140,7 +146,22 @@ export default function StudAttendance() {
       <Grid item xs={12} md={6} lg={4} style={{ marginBottom: '2rem' }}>
         {/* Dropdown to select course */}
         <FormControl fullWidth style={{ marginBottom: '1.75rem' }}>
-          {/* ... Existing code ... */}
+        <TextField
+            id="course-select"
+            select
+            label="Select a Course"
+            value={selectedCourse}
+            onChange={handleCourseChange}
+            SelectProps={{
+              displayEmpty: true,
+            }}
+          >
+            {hellodata.details.studentCourses.coursesEnrolled[0]?.semesterCourses.map((course) => (
+              <MenuItem key={course._id} value={course.courseCode}>
+                {course.courseCode}
+              </MenuItem>
+            ))}
+          </TextField>
         </FormControl>
 
         {/* Loading Indicator */}
